@@ -22,10 +22,6 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.*
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
-import io.reactivex.rxjava3.schedulers.Schedulers.io
-import io.reactivex.rxjava3.core.SingleEmitter
-
-import io.reactivex.rxjava3.core.SingleOnSubscribe
 
 import io.reactivex.rxjava3.core.Single
 
@@ -42,33 +38,38 @@ class MainActivity : AppCompatActivity() {
 
         // Prepare the device
         val device = OpenBCI(this)
-        device.waitForDevice()
-        device.startStreaming()
+        var counter = 0
+        var prevTime = System.nanoTime()
 
-        // Show the values on the screen
-        // Create a single observable of type Packet
-        val packetObservable = getSingleObservable(device)
-        val singleObserver = getSingleObserver()
+        device.createPacketStreamObservable()
+            .toFlowable(BackpressureStrategy.DROP)
+            .observeOn(Schedulers.newThread())
+            //.subscribeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.newThread())
+            //.buffer(10, 1)
+            .subscribe({ packet ->
+                //Thread.sleep(100)
+                counter++
+                val curTime = System.nanoTime()
+                val duration = curTime - prevTime
+                prevTime = curTime
 
-        packetObservable
-            .observeOn(io())
-            .subscribeOn(AndroidSchedulers.mainThread())
-            .subscribe(singleObserver)
+                Log.i(
+                    "INFO",
+                    "duration = ${duration.toFloat() / 1_000_000}, counter = $counter, sample = ${packet.sampleNumber}, channels = ${
+                        packet.channels.joinToString(", ")}")
 
-       /* while(true) {
-            val packet = device.readPacket()
-            // TODO read 10 packets, and log each of them
-            Log.i(
-                "INFO",
-                "sample = ${packet.sampleNumber}, channels = ${packet.channels.joinToString(", ")}"
-            )
-        }*/
+            }, { e->
+                Log.e(
+                    "ERROR",
+                    "OpenBCI device readPacket() failed: ${e.stackTraceToString()}"
+                )
+            })
     }
 
     private fun getSingleObservable(device: OpenBCI): Single<OpenBCI.Packet> {
         Log.i("INFO", "creating single")
         return Single.create { emitter ->
-
             val packet = device.readPacket()
             emitter.onSuccess(packet)
             emitter.onSuccess(packet)

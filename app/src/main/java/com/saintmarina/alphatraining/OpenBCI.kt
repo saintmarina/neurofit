@@ -9,22 +9,10 @@ import android.util.Log
 import com.hoho.android.usbserial.driver.UsbSerialDriver
 import com.hoho.android.usbserial.driver.UsbSerialPort
 import com.hoho.android.usbserial.driver.UsbSerialProber
+import io.reactivex.rxjava3.core.Observable
+import java.lang.Exception
 
-/*
-Packet contents
-Byte 1: 0xA0
-Byte 2: Sample Number
-Bytes 3-5: Data value for EEG channel 1
-Bytes 6-8: Data value for EEG channel 2
-Bytes 9-11: Data value for EEG channel 3
-Bytes 12-14: Data value for EEG channel 4
-Bytes 15-17: Data value for EEG channel 5
-Bytes 18-20: Data value for EEG channel 6
-Bytes 21-23: Data value for EEG channel 6
-Bytes 24-26: Data value for EEG channel 8
-Aux Data Bytes 27-32: 6 bytes of data
-Byte 33: 0xCX where X is 0-F in hex
-*/
+
 
 class OpenBCI(context: Context){
     companion object {
@@ -39,6 +27,8 @@ class OpenBCI(context: Context){
     private var port: UsbSerialPort
     private var readBuffer = ByteArray(BUF_CAPACITY)
     private var readBufferLength = 0
+    private var packetCounter = 0
+    private var prevSampleNum = 0
 
     class Packet(
         var sampleNumber: Int,
@@ -75,7 +65,7 @@ class OpenBCI(context: Context){
         port.setParameters(115200, 8, UsbSerialPort.STOPBITS_1, UsbSerialPort.PARITY_NONE)
     }
 
-    fun waitForDevice() {
+    private fun waitForDevice() {
         // Clearing device's buffer
         Log.i("INFO", "Send reset")
         // This makes the device stop sending data if it was already on and sending data
@@ -90,15 +80,45 @@ class OpenBCI(context: Context){
         waitForHeaders()
     }
 
-    fun startStreaming() {
+    private fun waitForHeaders() {
+        fun bufContainsHeaders():Boolean {
+            return arrayToAscii(pendingData()).contains(Regex("OpenBCI V3.*\\$\\$\\$", RegexOption.DOT_MATCHES_ALL))
+        }
+
+        Log.i("INFO", "wait for device header")
+        while (!bufContainsHeaders()) {
+            readDataUpTo(readBufferLength+1)
+        }
+        // clear buffer before returning
+        readBufferLength = 0
+    }
+
+    private fun startStreaming() {
         Log.i("INFO", "startStreaming: send start streaming command")
+        packetCounter = 0
+        prevSampleNum = 0
         sendToDevice('b')
     }
 
-    fun stopStreaming() {
+    private fun stopStreaming() {
         sendToDevice('s')
     }
 
+    /*
+    Packet contents
+    Byte 1: 0xA0
+    Byte 2: Sample Number
+    Bytes 3-5: Data value for EEG channel 1
+    Bytes 6-8: Data value for EEG channel 2
+    Bytes 9-11: Data value for EEG channel 3
+    Bytes 12-14: Data value for EEG channel 4
+    Bytes 15-17: Data value for EEG channel 5
+    Bytes 18-20: Data value for EEG channel 6
+    Bytes 21-23: Data value for EEG channel 6
+    Bytes 24-26: Data value for EEG channel 8
+    Aux Data Bytes 27-32: 6 bytes of data
+    Byte 33: 0xCX where X is 0-F in hex
+    */
     fun readPacket(): Packet {
         fun atTheBeginningOfValidPacket():Boolean {
             // Making sure we have a valid Packet of data of len 33
@@ -125,7 +145,7 @@ class OpenBCI(context: Context){
         }
 
         // Step 2: parse the data, as we have the beginning of a valid Packet
-        val sampleNumber:Int = readBuffer[1].toUByte().toInt()
+        val curSampleNumber = readBuffer[1].toUByte().toInt()
         val channels = DoubleArray(8)
 
         for (i in 0 until 8) {
@@ -135,7 +155,24 @@ class OpenBCI(context: Context){
         // Step 3: discard the packet data that we've parsed
         removeBytesFromFrontReadBuf(PACKET_SIZE)
 
-        return Packet(sampleNumber, channels)
+        packetCounter += (curSampleNumber - prevSampleNum + 256) % 256
+        prevSampleNum = curSampleNumber
+        return Packet(packetCounter, channels)
+    }
+
+    fun createPacketStreamObservable(): Observable<Packet> {
+        return Observable.create { emitter ->
+            try {
+                waitForDevice()
+                startStreaming()
+                while (!emitter.isDisposed) {
+                    emitter.onNext(readPacket())
+                }
+                stopStreaming()
+            } catch (e: Exception) {
+                emitter.onError(e)
+            }
+        }
     }
 
     private fun removeBytesFromFrontReadBuf(n: Int) {
@@ -148,8 +185,7 @@ class OpenBCI(context: Context){
             val buf = ByteArray(port.readEndpoint.maxPacketSize)
             val len = port.read(buf,0)
             System.arraycopy(buf, 0, readBuffer, readBufferLength, len)
-            readBufferLength+=len
-
+            readBufferLength += len
         }
     }
 
@@ -169,23 +205,6 @@ class OpenBCI(context: Context){
             it[0] = command.code.toByte()
         }
         port.write(array, 0)
-    }
-
-    private fun waitForHeaders() {
-        fun bufContainsHeaders():Boolean {
-            return arrayToAscii(pendingData()).contains(Regex("OpenBCI V3.*\\$\\$\\$", RegexOption.DOT_MATCHES_ALL))
-        }
-
-        Log.i("INFO", "wait for device header")
-        while (!bufContainsHeaders()) {
-            readDataUpTo(readBufferLength+1)
-        }
-        // clear buffer before returning
-        readBufferLength = 0
-    }
-
-    private fun arrayToHex(array: ByteArray):String {
-        return array.joinToString(" ") { i -> "%02x".format(i)}
     }
 
     private fun arrayToAscii(array: ByteArray): String {
