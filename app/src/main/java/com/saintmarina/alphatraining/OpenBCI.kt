@@ -119,7 +119,7 @@ class OpenBCI(context: Context){
     Aux Data Bytes 27-32: 6 bytes of data
     Byte 33: 0xCX where X is 0-F in hex
     */
-    fun readPacket(): Packet {
+    private fun readPacket(): Packet {
         fun atTheBeginningOfValidPacket():Boolean {
             // Making sure we have a valid Packet of data of len 33
             // With proper start byte 0xA0 and end byte0xCX where X is 0-F in hex
