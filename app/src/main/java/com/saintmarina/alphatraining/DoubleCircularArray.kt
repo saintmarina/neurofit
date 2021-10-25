@@ -12,4 +12,6 @@ class DoubleCircularArray(private val size: Int) {
     fun getRelativeToLast(index: Int): Double {
         return array[(head + index + size) % size]
     }
+
+
 }
