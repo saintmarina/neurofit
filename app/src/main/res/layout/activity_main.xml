@@ -9,4 +9,10 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
+    <com.saintmarina.alphatraining.WaveVisualizer
+        android:id="@+id/channel1"
+        android:layout_width="match_parent"
+        android:layout_height="135dp"
+        app:yMax="50"
+        app:yMin="-50"/>
 </LinearLayout>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="WaveVisualizer">
+        <attr name="yMax" format="float" />
+        <attr name="yMin" format="float" />
+    </declare-styleable>
+</resources>

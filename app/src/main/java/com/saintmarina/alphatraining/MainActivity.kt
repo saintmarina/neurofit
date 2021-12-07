@@ -15,9 +15,11 @@ package com.saintmarina.alphatraining
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.AttributeSet
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import io.reactivex.rxjava3.schedulers.Schedulers
+import org.xmlpull.v1.XmlPullParser
 
 const val CHANNELS = 8
 
@@ -28,8 +30,14 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         val linearLayout = findViewById<LinearLayout>(R.id.linear_layout)
 
-        val channels = Array(8) { ChannelOrganizer(this) }
+        var channel1_viz = findViewById<WaveVisualizer>(R.id.channel1)
 
+        val channels = Array(8) { ChannelOrganizer() }
+
+        channel1_viz.values = channels[0].vizData
+
+
+        /*
 
         for (c in 0 until CHANNELS) {
             linearLayout.addView(
@@ -37,6 +45,7 @@ class MainActivity : AppCompatActivity() {
                 LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 200)
             )
         }
+         */
 
         /*
         Observable.interval(15, TimeUnit.MILLISECONDS)

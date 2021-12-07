@@ -2,14 +2,22 @@ package com.saintmarina.alphatraining
 
 import android.content.Context
 import android.graphics.*
+import android.util.AttributeSet
 import android.view.View
 import androidx.core.graphics.withMatrix
 
-class WaveVisualizer(context: Context,
-                     private val values: DoubleCircularArray,
-                     private val yMin: Double,
-                     private val yMax: Double) : View(context) {
-    var points = FloatArray((values.size - 1) * 4)
+class WaveVisualizer(context: Context, attributeSet: AttributeSet) : View(context, attributeSet) {
+    var values: DoubleCircularArray = DoubleCircularArray(NUM_POINTS_ON_SCREEN)
+        set(value) {
+            field = value
+            points = FloatArray((values.size - 1) * 4)
+        }
+    private var points = FloatArray((values.size - 1) * 4) // TODO re-initialize when values is set
+
+    var yMin = attributeSet.getAttributeFloatValue(R.attr.yMin, -1.0f).toDouble()
+    var yMax = attributeSet.getAttributeFloatValue(R.attr.yMax, 1.0f).toDouble()
+
+    private val m = Matrix()
     private val paint = Paint().apply {
         color = Color.BLACK
         strokeWidth = 0F
@@ -40,7 +48,7 @@ class WaveVisualizer(context: Context,
             points[4 * (i - 1) + 3] = py
         }
 
-        val m = Matrix()
+        m.reset()
         m.preTranslate(0.0f, -yMin.toFloat())
         m.postScale(width / (-n + 1), (height / (yMin - yMax)).toFloat())
         m.postTranslate(width, height)
@@ -50,6 +58,7 @@ class WaveVisualizer(context: Context,
         }
 
         // redraw all the time
-        invalidate()
+        invalidate() // TODO look later if we need this line. Perhaps we should invalidate only
+                    //  when we update values
     }
 }
