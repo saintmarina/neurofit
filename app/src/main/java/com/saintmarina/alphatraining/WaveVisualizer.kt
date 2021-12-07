@@ -2,20 +2,19 @@ package com.saintmarina.alphatraining
 
 import android.content.Context
 import android.graphics.*
-import android.util.AttributeSet
 import android.view.View
 import androidx.core.graphics.withMatrix
 
-class WaveVisualizer(context: Context, attributeSet: AttributeSet) : View(context, attributeSet) {
+class WaveVisualizer(context: Context) : View(context) {
+
     var values: DoubleCircularArray = DoubleCircularArray(NUM_POINTS_ON_SCREEN)
         set(value) {
             field = value
             points = FloatArray((values.size - 1) * 4)
         }
     private var points = FloatArray((values.size - 1) * 4) // TODO re-initialize when values is set
-
-    var yMin = attributeSet.getAttributeFloatValue(R.attr.yMin, -1.0f).toDouble()
-    var yMax = attributeSet.getAttributeFloatValue(R.attr.yMax, 1.0f).toDouble()
+    var yMin = -1.0f
+    var yMax = 1.0f
 
     private val m = Matrix()
     private val paint = Paint().apply {
@@ -41,16 +40,16 @@ class WaveVisualizer(context: Context, attributeSet: AttributeSet) : View(contex
 
             px = i.toFloat()
             py = values.getRelativeToLast(-i).toFloat()
-            if (py > yMax) py = yMax.toFloat()
-            if (py < yMin) py = yMin.toFloat()
+            if (py > yMax) py = yMax
+            if (py < yMin) py = yMin
 
             points[4 * (i - 1) + 2] = px
             points[4 * (i - 1) + 3] = py
         }
 
         m.reset()
-        m.preTranslate(0.0f, -yMin.toFloat())
-        m.postScale(width / (-n + 1), (height / (yMin - yMax)).toFloat())
+        m.preTranslate(0.0f, -yMin)
+        m.postScale(width / (-n + 1), height / (yMin - yMax))
         m.postTranslate(width, height)
 
         canvas!!.withMatrix(m) {

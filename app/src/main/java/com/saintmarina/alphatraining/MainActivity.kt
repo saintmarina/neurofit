@@ -29,15 +29,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val linearLayout = findViewById<LinearLayout>(R.id.linear_layout)
-
-        var channel1_viz = findViewById<WaveVisualizer>(R.id.channel1)
-
-        val channels = Array(8) { ChannelOrganizer() }
-
-        channel1_viz.values = channels[0].vizData
-
-
-        /*
+        val channels = Array(8) { ChannelOrganizer(this) }
 
         for (c in 0 until CHANNELS) {
             linearLayout.addView(
@@ -45,7 +37,6 @@ class MainActivity : AppCompatActivity() {
                 LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 200)
             )
         }
-         */
 
         /*
         Observable.interval(15, TimeUnit.MILLISECONDS)
