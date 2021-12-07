@@ -2,7 +2,7 @@ package com.saintmarina.alphatraining
 /* Set up WiFi debuging
  * Connect the Tablet to the Laptop via USB-C cable
  * In terminal:
- * adb shell setprop service.adb.tcp.port
+ * adb shell setprop service.adb.tcp.port # probably not needed
  * adb tcpip 4444
  * adb connect 192.168.0.219:4444
  * Disconnect USB cable.
@@ -13,31 +13,93 @@ package com.saintmarina.alphatraining
  * Good luck!
 */
 
-// TODO Draw a line on the screen
-
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.*
 import io.reactivex.rxjava3.schedulers.Schedulers
-import java.util.concurrent.TimeUnit
-import kotlin.math.abs
 
-// TODO create a piece of fake data and show it on the screen
-// * create an array of DoubleCircularArray with values 10 to -10
-// TODO create Circular array for each type of wave (normal, alpha, envelope)
-// TODO feed the Circular array with some data from fresh brain data in real time
-// TODO have a timer(interval 15 milliseconds) this is where i redraw the graphs
+const val CHANNELS = 8
+
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val linearLayout = findViewById<LinearLayout>(R.id.linear_layout)
-        //Creating DoubleCircularArray
+
+        val channels = Array(8) { ChannelOrganizer(this) }
+
+
+        for (c in 0 until CHANNELS) {
+            linearLayout.addView(
+                channels[c].visualizer,
+                LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 200)
+            )
+        }
+
+        /*
+        Observable.interval(15, TimeUnit.MILLISECONDS)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                for (c in 0 until CHANNELS) {
+                    allWaves.visualizers[c].invalidate()
+                }
+            }
+*/
+
+        // Populating data IRL
+        val device = OpenBCI(this)
+        device.createPacketStreamObservable()
+        //Observable.interval(30, TimeUnit.MILLISECONDS)
+            .subscribeOn(Schedulers.newThread())
+            // .sample(SCREEN_WAVE_SAMPLE_RATE_MILLIS.toLong(), TimeUnit.MILLISECONDS) // Eventually, we'll sample to speed up display
+            .subscribe { packet ->
+                //var packet = packets[2]
+                for (c in 0 until CHANNELS) {
+                    val ch = channels[c]
+                    var v = packet.channels[c];
+                    ch.pushValue(v) // TODO finish this function. Code below should go inside pushvalue()
+                    //var v = Random.nextDouble(0.0, 100000.0);
+                    v = ch.fAlpha.filter(v);
+                    // There's a special subscriber that is also an observer.
+                    ch.vizData.push(v)
+                }
+
+                //normalChanel1.push(f.filter(packet.channels[0])) Left for reference
+            }
+
+/*
+
+
+        var alpha = DoubleCircularArray(250*10)
+        var envelope = DoubleCircularArray(250*10)
+        val device = OpenBCI(this)
+        val observable = device.createPacketStreamObservable()
+        observable.subscribe{ packet->
+            normalChannel1.push(packet.channels[0])
+        }
+        val visualizer1 = WaveVisualizer(this, normalChannel1,-50.0, 50.0)
+        visualizer1.layoutParams = LinearLayout.LayoutParams(2000, 300) // Here put your custom size
+        visualizer1.setBackgroundColor(Color.CYAN)
+        linearLayout.addView(visualizer1)
+        Observable.interval(15, TimeUnit.MILLISECONDS)
+            //.observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                Log.d("roses1", "inside the Observable.interval")
+                visualizer1.invalidate()
+
+            }
+
+       /* linearLayout.addView(visualizer1)
+        visualizer1.invalidate()
+*/
+
+
+    }*/}
+}
+/*
+        //Creating fake data
         val nums = doubleArrayOf(0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0,
             10.0, 9.0, 8.0, 7.0, 6.0, 5.0, 4.0, 3.0, 2.0, 1.0, 0.0,
             -1.0, -2.0, -3.0, -4.0, -5.0, -6.0, -7.0, -8.0, -9.0, -10.0, -9.0, -8.0, -7.0, -6.0, -5.0, -4.0, -3.0, -2.0, -1.0)
@@ -48,27 +110,7 @@ class MainActivity : AppCompatActivity() {
                sampleArray.push(nums[j])
             }
         }
+ */
 
-
-
-        val visualizer1 = WaveVisualizer(this, sampleArray,numOfWaves*nums.size, 10.0)
-        linearLayout.addView(visualizer1)
-        visualizer1.invalidate()
-       // WaveVisualizer.hello = 123
-
-
-        /*This code will make the wave animated
-        linearLayout.addView(visualizer1)
-        Observable.interval(15, TimeUnit.MILLISECONDS)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-
-                visualizer1.invalidate()
-            }*/
-
-
-/*7*/
-    }
-}
 
 

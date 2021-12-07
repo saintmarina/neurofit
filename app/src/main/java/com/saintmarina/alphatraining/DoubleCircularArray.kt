@@ -1,6 +1,6 @@
 package com.saintmarina.alphatraining
 
-class DoubleCircularArray(private val size: Int) {
+class DoubleCircularArray(val size: Int) {
     private var head = 0
     private var array: DoubleArray = DoubleArray(size)
 
@@ -12,6 +12,4 @@ class DoubleCircularArray(private val size: Int) {
     fun getRelativeToLast(index: Int): Double {
         return array[(head + index + size) % size]
     }
-
-
 }

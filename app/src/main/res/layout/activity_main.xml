@@ -9,6 +9,4 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-
-
 </LinearLayout>
