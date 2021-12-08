@@ -8,11 +8,34 @@
     android:id="@+id/linear_layout"
     android:orientation="vertical"
     tools:context=".MainActivity">
-
-    <com.saintmarina.alphatraining.WaveVisualizer
-        android:id="@+id/channel1"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="135dp"
-        app:yMax="50"
-        app:yMin="-50"/>
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/button_all_waves"
+            android:layout_width="100dp"
+            android:layout_height="75dp"
+            android:layout_gravity="start"
+            android:layout_marginEnd="20dp"
+            android:text="All Waves"/>
+        <Button
+            android:id="@+id/button_alpha_waves"
+            android:layout_width="100dp"
+            android:layout_height="75dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="20dp"
+            android:text="Alpha Waves"/>
+        <Button
+            android:id="@+id/button_envelope_waves"
+            android:layout_width="100dp"
+            android:layout_height="75dp"
+            android:layout_gravity="end"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:text="Env Waves"/>
+    </LinearLayout>
+
 </LinearLayout>

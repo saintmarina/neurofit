@@ -6,13 +6,12 @@ import android.view.View
 import androidx.core.graphics.withMatrix
 
 class WaveVisualizer(context: Context) : View(context) {
-
     var values: DoubleCircularArray = DoubleCircularArray(NUM_POINTS_ON_SCREEN)
         set(value) {
             field = value
             points = FloatArray((values.size - 1) * 4)
         }
-    private var points = FloatArray((values.size - 1) * 4) // TODO re-initialize when values is set
+    private var points = FloatArray((values.size - 1) * 4)
     var yMin = -1.0f
     var yMax = 1.0f
 
