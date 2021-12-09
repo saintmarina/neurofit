@@ -2,7 +2,7 @@ package com.saintmarina.alphatraining
 
 class DoubleCircularArray(val size: Int) {
     private var head = 0
-    private var array: DoubleArray = DoubleArray(size)
+    var array: DoubleArray = DoubleArray(size)
 
     fun push(n: Double) {
         head = (head+1) % size

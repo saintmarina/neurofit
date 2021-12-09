@@ -38,4 +38,12 @@
             android:text="Env Waves"/>
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="30dp"
+        android:text="Size"/>
+
 </LinearLayout>

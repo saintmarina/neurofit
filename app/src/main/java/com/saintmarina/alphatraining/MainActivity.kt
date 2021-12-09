@@ -18,7 +18,10 @@ import android.os.Bundle
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
+import android.widget.TextView
 import io.reactivex.rxjava3.schedulers.Schedulers
+import kotlin.math.max
+import kotlin.math.min
 
 const val CHANNELS = 8
 
@@ -30,54 +33,44 @@ class MainActivity : AppCompatActivity() {
         val buttonAll = findViewById<Button>(R.id.button_all_waves)
         val buttonAlpha = findViewById<Button>(R.id.button_alpha_waves)
         val buttonEnvelope = findViewById<Button>(R.id.button_envelope_waves)
-
+        val text = findViewById<TextView>(R.id.text)
 
         val channels = Array(8) { ChannelOrganizer(this) }
+
         buttonAll.setOnClickListener {
-            for (c in 0 until CHANNELS) {
-                channels[c].showAllWaves()
-            }
+            channels.forEach { c -> c.showAllWaves() }
         }
         buttonAlpha.setOnClickListener {
-            for (c in 0 until CHANNELS) {
-                channels[c].showAlphaWaves()
-            }
+            channels.forEach { c -> c.showAlphaWaves() }
         }
         buttonEnvelope.setOnClickListener {
-            for (c in 0 until CHANNELS) {
-                channels[c].showEnvelopeWaves()
-            }
-        }
-        for (c in 0 until CHANNELS) {
-            linearLayout.addView(
-                channels[c].visualizer,
-                LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 200)
-            )
+            channels.forEach { c -> c.showAlphaEnvelopeWaves() }
         }
 
-        /*
-        Observable.interval(15, TimeUnit.MILLISECONDS)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                for (c in 0 until CHANNELS) {
-                    allWaves.visualizers[c].invalidate()
-                }
-            }
-        */
+        channels.forEach { c -> linearLayout.addView(
+            c.visualizer,
+            LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 200))
+        }
 
         // Populating data IRL
         val device = OpenBCI(this)
         device.createPacketStreamObservable()
-            //Observable.interval(30, TimeUnit.MILLISECONDS)
             .subscribeOn(Schedulers.newThread())
             // .sample(SCREEN_WAVE_SAMPLE_RATE_MILLIS.toLong(), TimeUnit.MILLISECONDS) // Eventually, we'll sample to speed up display
             .subscribe { packet ->
-                //var packet = packets[2]
-                for (c in 0 until CHANNELS) {
-                    val v = packet.channels[c]
-                    //var v = Random.nextDouble(0.0, 100000.0);
-                    channels[c].pushValue(v)
+                var yMax = 1.0f
+                var yMin = 0.0f
+                for (i in 0 until CHANNELS) {
+                    channels[i].pushValue(packet.channels[i])
+                    yMax = max(channels[i].visualizer.yMax, yMax)
+                    yMin = min(channels[i].visualizer.yMin, yMin)
                 }
+                channels.forEach { c ->
+                    c.visualizer.yMax = yMax
+                    c.visualizer.yMin = yMin
+                }
+                runOnUiThread { text.text = yMax.toInt().toString() }
+
             }
     }
 }
