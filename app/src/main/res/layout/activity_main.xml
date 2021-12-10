@@ -26,7 +26,6 @@
             android:layout_width="100dp"
             android:layout_height="75dp"
             android:layout_gravity="center"
-            android:layout_marginStart="20dp"
             android:text="Alpha Waves"/>
         <Button
             android:id="@+id/button_envelope_waves"

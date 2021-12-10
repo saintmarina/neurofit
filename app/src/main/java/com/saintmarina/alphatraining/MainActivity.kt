@@ -52,25 +52,30 @@ class MainActivity : AppCompatActivity() {
             LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 200))
         }
 
+        fun updateMinMaxVisualizers() {
+            var yMax = 1.0f
+            var yMin = 0.0f
+            for (i in 0 until CHANNELS) {
+                yMax = max(channels[i].maxPoint, yMax)
+                yMin = min(channels[i].minPoint, yMin)
+            }
+            channels.forEach { c ->
+                c.visualizer.yMax = yMax
+                c.visualizer.yMin = yMin
+            }
+
+            runOnUiThread { text.text = yMax.toInt().toString() }
+        }
+
         // Populating data IRL
-        val device = OpenBCI(this)
-        device.createPacketStreamObservable()
+        OpenBCI(this)
+            .createPacketStreamObservable()
             .subscribeOn(Schedulers.newThread())
-            // .sample(SCREEN_WAVE_SAMPLE_RATE_MILLIS.toLong(), TimeUnit.MILLISECONDS) // Eventually, we'll sample to speed up display
             .subscribe { packet ->
-                var yMax = 1.0f
-                var yMin = 0.0f
                 for (i in 0 until CHANNELS) {
                     channels[i].pushValue(packet.channels[i])
-                    yMax = max(channels[i].maxPoint, yMax)
-                    yMin = min(channels[i].minPoint, yMin)
                 }
-                channels.forEach { c ->
-                    c.visualizer.yMax = yMax
-                    c.visualizer.yMin = yMin
-                }
-                runOnUiThread { text.text = yMax.toInt().toString() }
-
+                updateMinMaxVisualizers()
             }
     }
 }

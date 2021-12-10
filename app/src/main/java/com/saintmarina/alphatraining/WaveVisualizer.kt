@@ -57,6 +57,6 @@ class WaveVisualizer(context: Context) : View(context) {
 
         // redraw all the time
         // TODO only call it in ChannelOrganizer when the data array changes.
-        invalidate()
+        //invalidate()
     }
 }

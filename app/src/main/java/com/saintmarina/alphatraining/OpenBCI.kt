@@ -16,6 +16,7 @@ import java.lang.Exception
 
 class OpenBCI(context: Context){
     companion object {
+        const val SAMPLE_RATE_HZ = 250
         private const val INTENT_ACTION_GRANT_USB = BuildConfig.APPLICATION_ID + ".GRANT_USB"
         private const val BUF_CAPACITY = 2000
         private const val PACKET_SIZE = 33
