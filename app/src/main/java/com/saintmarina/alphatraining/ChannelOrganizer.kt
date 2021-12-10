@@ -24,24 +24,24 @@ data class ChannelOrganizer(val context: Context) {
         yMax = MAX
     }
 
+    var maxPoint = 1.0f
+    var minPoint = 0.0f
+
     private val fAll = CascadedBiquadFilter(FilterCoefficients.allWaves)
     private val fAlpha = CascadedBiquadFilter(FilterCoefficients.alphaWaves)
     private val fAlphaEnvelope = CascadedBiquadFilter(FilterCoefficients.envelopeDetection)
 
     fun pushValue(v: Double) {
+        val allV = fAll.filter(v)
+        val alphaV = fAlpha.filter(v)
+        val alphaEnvelopeV = fAlphaEnvelope.filter(abs(alphaV))
         if (counter == 0) {
-            // TODO take out the filter() calls outside of the if/else
-            fAll.filter(v)
-            fAlpha.filter(v)
-            fAlphaEnvelope.filter(v)
             counter = 2
         } else {
-            vizDataAll.push(fAll.filter(v))
-            setNewAmplitude(visualizer)
-            val alphaV = fAlpha.filter(v)
+            vizDataAll.push(allV)
             vizDataAlpha.push(alphaV)
-            // The output of the envelope filter will be the volume of the audio
-            vizDataAlphaEnvelope.push(fAlphaEnvelope.filter(abs(alphaV)))
+            vizDataAlphaEnvelope.push(alphaEnvelopeV)
+            setNewAmplitude(visualizer)
             counter--
         }
     }
@@ -59,13 +59,9 @@ data class ChannelOrganizer(val context: Context) {
         setNewAmplitude(visualizer)
     }
 
-    fun setNewAmplitude(visualizer: WaveVisualizer) {
-        // TODO all visualizers should have the same min/max settings
-        val newMax = max(visualizer.values.array.maxOrNull() ?: 1.00,
-            abs(visualizer.values.array.minOrNull()?: 1.00) )
-        val newMin = if (visualizer.values == vizDataAlphaEnvelope) 0.00 else -newMax
-        visualizer.yMax = newMax.toFloat()
-        visualizer.yMin = newMin.toFloat()
+    private fun setNewAmplitude(visualizer: WaveVisualizer) {
+        maxPoint = max(visualizer.values.array.maxOrNull() ?: 1.00,
+            abs(visualizer.values.array.minOrNull()?: 1.00) ).toFloat()
+        minPoint = if (visualizer.values == vizDataAlphaEnvelope) 0.0f else -maxPoint
     }
-
 }

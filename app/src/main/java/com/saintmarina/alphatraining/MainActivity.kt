@@ -62,8 +62,8 @@ class MainActivity : AppCompatActivity() {
                 var yMin = 0.0f
                 for (i in 0 until CHANNELS) {
                     channels[i].pushValue(packet.channels[i])
-                    yMax = max(channels[i].visualizer.yMax, yMax)
-                    yMin = min(channels[i].visualizer.yMin, yMin)
+                    yMax = max(channels[i].maxPoint, yMax)
+                    yMin = min(channels[i].minPoint, yMin)
                 }
                 channels.forEach { c ->
                     c.visualizer.yMax = yMax
