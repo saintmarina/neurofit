@@ -38,11 +38,53 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/text"
+        android:id="@+id/textMax"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:textSize="30dp"
-        android:text="Size"/>
+        android:text="yMax"/>
+    <TextView
+        android:id="@+id/textVolume"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="30dp"
+        android:text="Volume"/>
+
+    <SeekBar
+        android:id="@+id/seekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="100"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/button_volume_check_0"
+            android:layout_width="100dp"
+            android:layout_height="75dp"
+            android:text="0"
+            android:layout_gravity="start"
+            android:layout_marginEnd="20dp"/>
+        <Button
+            android:id="@+id/button_volume_check_50"
+            android:layout_width="100dp"
+            android:layout_height="75dp"
+            android:text="50"
+            android:layout_gravity="center"/>
+        <Button
+            android:id="@+id/button_volume_check_100"
+            android:layout_width="100dp"
+            android:layout_height="75dp"
+            android:layout_gravity="end"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:text="100"/>
+    </LinearLayout>
 
 </LinearLayout>

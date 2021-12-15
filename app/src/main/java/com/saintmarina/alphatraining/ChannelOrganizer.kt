@@ -27,10 +27,12 @@ data class ChannelOrganizer(val context: Context) {
     private val fAlpha = CascadedBiquadFilter(FilterCoefficients.alphaWaves)
     private val fAlphaEnvelope = CascadedBiquadFilter(FilterCoefficients.envelopeDetection)
 
+    var alphaEnvelopeV = 0.00
+
     fun pushValue(v: Double) {
         val allV = fAll.filter(v)
         val alphaV = fAlpha.filter(v)
-        val alphaEnvelopeV = fAlphaEnvelope.filter(abs(alphaV))
+        alphaEnvelopeV = fAlphaEnvelope.filter(abs(alphaV))
 
         counter++
         if (counter == SCREEN_DECIMATION_RATE) {

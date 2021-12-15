@@ -54,9 +54,5 @@ class WaveVisualizer(context: Context) : View(context) {
         canvas!!.withMatrix(m) {
             drawLines(points, paint)
         }
-
-        // redraw all the time
-        // TODO only call it in ChannelOrganizer when the data array changes.
-        //invalidate()
     }
 }
