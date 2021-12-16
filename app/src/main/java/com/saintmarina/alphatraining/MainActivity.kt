@@ -13,25 +13,47 @@ package com.saintmarina.alphatraining
  * Good luck!
 */
 
+// TODO what about an idea of making a separate class for channels array
+// TODO disable screen rotation
+// TODO UI: make the channels look more scientifiky
+// * every second have a light gray line dividing the channel
+// * on the very top put numbers (for seconds) give a white contour(outline)
+// FIXME UI FREEZING BUG:
+// * get rid of runOnUiThread. Make instance variables that will be set everytime we push a packet.
+// * Have separate RxJava "observable.schedule on Main Thread wiht an interval", there update instance variables
+// TODO take out 0, 50, 100 buttons
+// TODO SEEKBAR:
+// * make it shorter (add right and left margins)
+// * Add a TOGGLE BUTTON autoscale. When on the seekbar is disabled, and the yMax is the max of all channel maxes combined ( of what is being displayed Allwaves/AlphaWaves/ etc.)
+// * When off the  seekbar is enabled and it pick the yMax = 300*100/(seekbar.progress)
+// * the volume should always be the envelopeValue/yMax
+// TODO TOGGLE BUTTON:
+// * the button would be green, once pressed it would turn red
+// * the button would indicate start/stop training (toggle the text START/STOP)
+// * if the button is pressed the user would start hearing Alpha Waves
+// * else there would be so sound
+// TODO count the score of the session
+// * calculation for the score:  average of the volume(alpha waves)
+// * have a DoubleCircularArray for each score
+// * have a score for the LAST 1 minute (for calibrating) all the time
+// * LAST 10 minutes
+// * WHOLE SESSION
+// TODO add a timer to time the session
+// FIXME prevent the app from crashing when the OpenBCI is unplugged
+// * Display a dialogue box and
+// * if in the middle of a training session, save all the relevant data to be able to continue
+// TODO think about 5-6 seconds alpha wave bursts combos
+
+
 import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Looper
-import android.util.Log
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.TextView
-import io.reactivex.rxjava3.android.plugins.RxAndroidPlugins
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
-import kotlin.math.max
-import kotlin.math.min
-
-const val CHANNELS = 8
 
 @SuppressLint("SetTextI18n")
 class MainActivity : AppCompatActivity() {
@@ -43,86 +65,41 @@ class MainActivity : AppCompatActivity() {
         val buttonAlpha = findViewById<Button>(R.id.button_alpha_waves)
         val buttonEnvelope = findViewById<Button>(R.id.button_envelope_waves)
 
-        val buttonVolume0 = findViewById<Button>(R.id.button_volume_check_0)
-        val buttonVolume50 = findViewById<Button>(R.id.button_volume_check_50)
-        val buttonVolume100 = findViewById<Button>(R.id.button_volume_check_100)
-
         val textMax = findViewById<TextView>(R.id.textMax)
         val textVolume = findViewById<TextView>(R.id.textVolume)
         val seekBar = findViewById<SeekBar>(R.id.seekBar)
 
+
         val player = Audio(this).apply { play() }
-
-        buttonVolume0.setOnClickListener {
-            player.setVolume(0.0f)
-        }
-        buttonVolume50.setOnClickListener {
-            player.setVolume(0.5f)
-        }
-        buttonVolume100.setOnClickListener {
-            player.setVolume(1.0f)
-        }
-
-
-        val channels = Array(8) { ChannelOrganizer(this) } //TODO what about an idea of making a separate class for this
+        val channels = Channels(this)
 
         buttonAll.setOnClickListener {
-            channels.forEach { c -> c.showAllWaves() }
+            channels.channels.forEach { c -> c.showAllWaves() }
         }
         buttonAlpha.setOnClickListener {
-            channels.forEach { c -> c.showAlphaWaves() }
+            channels.channels.forEach { c -> c.showAlphaWaves() }
         }
         buttonEnvelope.setOnClickListener {
-            channels.forEach { c -> c.showAlphaEnvelopeWaves() }
+            channels.channels.forEach { c -> c.showAlphaEnvelopeWaves() }
         }
 
-        channels.forEach { c -> linearLayout.addView(
-            c.visualizer,
-            LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 200))
-        }
-
-        fun updateMinMaxVisualizers() {
-            var yMax = 1.0f
-            var yMin = 0.0f
-            for (i in 0 until CHANNELS) {
-                yMax = max(channels[i].maxPoint, yMax)
-                yMin = min(channels[i].minPoint, yMin)
-            }
-            channels.forEach { c ->
-                c.visualizer.yMax = yMax
-                c.visualizer.yMin = yMin
-            }
-        }
-
-        fun computeVolume(): Float {
-            var envelopeAverage = 0.00
-            for (i in 0 until CHANNELS) {
-                envelopeAverage += channels[i].alphaEnvelopeV
-            }
-            envelopeAverage /= CHANNELS
-            return (envelopeAverage/(seekBar.progress+1)).toFloat()
-        }
+        channels.addToLayout(linearLayout)
 
         // Populating data IRL
         OpenBCI(this)
             .createPacketStreamObservable()
             .subscribeOn(Schedulers.newThread())
             .map { packet ->
-                for (i in 0 until CHANNELS) {
-                    channels[i].pushValue(packet.channels[i])
-                }
-                updateMinMaxVisualizers()
-                val volume = computeVolume()
-                player.setVolume(volume)
-                volume
+                channels.pushValueInEachChannel(packet)
+                channels.updateMinMaxVisualizers()
+                player.setVolume(channels.computeVolume(seekBar.progress))
             }
             .sample(100, TimeUnit.MILLISECONDS)
             .subscribe { volume ->
-                val yMax = channels[0].visualizer.yMax // they are all the same!!!
                 // .observeOn(AndroidSchedulers.mainThread()) doesn't work for some reason
                 // using runOnUiThread as a workaround
                 runOnUiThread {
-                    textMax.text = yMax.toInt().toString()
+                    textMax.text = channels.yMaxOfAllChannels.toInt().toString()
                     textVolume.text = "${(volume * 100).toInt()}%"
                 }
             }

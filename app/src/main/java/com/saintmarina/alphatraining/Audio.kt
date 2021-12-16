@@ -17,12 +17,13 @@ class Audio(context: Context) {
         player.stop()
     }
 
-    fun setVolume(volume_: Float) {
+    fun setVolume(volume_: Float): Float {
         var volume = volume_
 
         if (volume < 0.05f) {
             volume = 0.05f
         }
         player.setVolume(volume, volume)
+        return volume
     }
 }
