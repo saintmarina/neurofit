@@ -13,12 +13,12 @@ package com.saintmarina.alphatraining
  * Good luck!
 */
 
-// TODO what about an idea of making a separate class for channels array
-// TODO disable screen rotation
+// YES TODO what about an idea of making a separate class for channels array
+// YES TODO disable screen rotation
 // TODO UI: make the channels look more scientifiky
 // * every second have a light gray line dividing the channel
 // * on the very top put numbers (for seconds) give a white contour(outline)
-// FIXME UI FREEZING BUG:
+// YES FIXME UI FREEZING BUG:
 // * get rid of runOnUiThread. Make instance variables that will be set everytime we push a packet.
 // * Have separate RxJava "observable.schedule on Main Thread wiht an interval", there update instance variables
 // TODO take out 0, 50, 100 buttons
@@ -48,15 +48,24 @@ package com.saintmarina.alphatraining
 import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.TextView
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Completable.timer
+import io.reactivex.rxjava3.internal.operators.observable.ObservableAll
+import io.reactivex.rxjava3.internal.operators.observable.ObservableSingleMaybe
 import io.reactivex.rxjava3.schedulers.Schedulers
+import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.concurrent.thread
 
 @SuppressLint("SetTextI18n")
 class MainActivity : AppCompatActivity() {
+    var volume: Float = 0.0f
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -89,19 +98,18 @@ class MainActivity : AppCompatActivity() {
         OpenBCI(this)
             .createPacketStreamObservable()
             .subscribeOn(Schedulers.newThread())
-            .map { packet ->
+            .subscribe { packet ->
                 channels.pushValueInEachChannel(packet)
                 channels.updateMinMaxVisualizers()
-                player.setVolume(channels.computeVolume(seekBar.progress))
+                volume = player.setVolume(channels.computeVolume(seekBar.progress))
             }
-            .sample(100, TimeUnit.MILLISECONDS)
-            .subscribe { volume ->
-                // .observeOn(AndroidSchedulers.mainThread()) doesn't work for some reason
-                // using runOnUiThread as a workaround
-                runOnUiThread {
-                    textMax.text = channels.yMaxOfAllChannels.toInt().toString()
-                    textVolume.text = "${(volume * 100).toInt()}%"
-                }
+
+        io.reactivex.rxjava3.core.Observable.interval(100, TimeUnit.MILLISECONDS)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                Log.i("Thread", "name is ${Thread.currentThread().name }}")
+                textMax.text = channels.yMaxOfAllChannels.toInt().toString()
+                textVolume.text = "${(volume * 100).toInt()}%"
             }
     }
 }

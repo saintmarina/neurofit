@@ -10,7 +10,7 @@ const val CHANNELS = 8
 
 class Channels(context: Context) {
     val channels = Array(8) { ChannelOrganizer(context) }
-    val yMaxOfAllChannels = channels[0].visualizer.yMax // they are all the same!!!
+    var yMaxOfAllChannels = channels[0].visualizer.yMax // they are all the same!!!
 
 
     fun updateMinMaxVisualizers() {
@@ -24,6 +24,7 @@ class Channels(context: Context) {
             c.visualizer.yMax = yMax
             c.visualizer.yMin = yMin
         }
+        yMaxOfAllChannels = channels[0].visualizer.yMax
     }
 
     fun computeVolume(progress: Int): Float {
