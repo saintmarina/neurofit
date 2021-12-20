@@ -54,5 +54,6 @@ class WaveVisualizer(context: Context) : View(context) {
         canvas!!.withMatrix(m) {
             drawLines(points, paint)
         }
+        canvas.draw
     }
 }

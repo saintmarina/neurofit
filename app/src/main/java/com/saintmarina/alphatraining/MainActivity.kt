@@ -15,23 +15,23 @@ package com.saintmarina.alphatraining
 
 // YES TODO what about an idea of making a separate class for channels array
 // YES TODO disable screen rotation
-// TODO UI: make the channels look more scientifiky
-// * every second have a light gray line dividing the channel
-// * on the very top put numbers (for seconds) give a white contour(outline)
 // YES FIXME UI FREEZING BUG:
 // * get rid of runOnUiThread. Make instance variables that will be set everytime we push a packet.
 // * Have separate RxJava "observable.schedule on Main Thread wiht an interval", there update instance variables
-// TODO take out 0, 50, 100 buttons
+// YES TODO take out 0, 50, 100 buttons
+// YES TODO TOGGLE BUTTON:
+// * the button would be green, once pressed it would turn red
+// * the button would indicate start/stop training (toggle the text START/STOP)
+// * if the button is pressed the user would start hearing Alpha Waves
+// * else there would be so sound
+// TODO UI: make the channels look more scientific
+// * every second have a light gray line dividing the channel
+// * on the very top put numbers (for seconds) give a white contour(outline)
 // TODO SEEKBAR:
 // * make it shorter (add right and left margins)
 // * Add a TOGGLE BUTTON autoscale. When on the seekbar is disabled, and the yMax is the max of all channel maxes combined ( of what is being displayed Allwaves/AlphaWaves/ etc.)
 // * When off the  seekbar is enabled and it pick the yMax = 300*100/(seekbar.progress)
 // * the volume should always be the envelopeValue/yMax
-// TODO TOGGLE BUTTON:
-// * the button would be green, once pressed it would turn red
-// * the button would indicate start/stop training (toggle the text START/STOP)
-// * if the button is pressed the user would start hearing Alpha Waves
-// * else there would be so sound
 // TODO count the score of the session
 // * calculation for the score:  average of the volume(alpha waves)
 // * have a DoubleCircularArray for each score
@@ -46,25 +46,21 @@ package com.saintmarina.alphatraining
 
 
 import android.annotation.SuppressLint
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.TextView
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Completable.timer
-import io.reactivex.rxjava3.internal.operators.observable.ObservableAll
-import io.reactivex.rxjava3.internal.operators.observable.ObservableSingleMaybe
 import io.reactivex.rxjava3.schedulers.Schedulers
-import java.util.*
 import java.util.concurrent.TimeUnit
-import kotlin.concurrent.thread
 
 @SuppressLint("SetTextI18n")
 class MainActivity : AppCompatActivity() {
     var volume: Float = 0.0f
+    var isTraining = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,14 +69,32 @@ class MainActivity : AppCompatActivity() {
         val buttonAll = findViewById<Button>(R.id.button_all_waves)
         val buttonAlpha = findViewById<Button>(R.id.button_alpha_waves)
         val buttonEnvelope = findViewById<Button>(R.id.button_envelope_waves)
+        val buttonStartStop = findViewById<Button>(R.id.start_stop_toggle_button)
+            .apply {
+                setBackgroundColor(Color.GREEN)
+                text = "START"
+            }
 
         val textMax = findViewById<TextView>(R.id.textMax)
         val textVolume = findViewById<TextView>(R.id.textVolume)
         val seekBar = findViewById<SeekBar>(R.id.seekBar)
 
 
-        val player = Audio(this).apply { play() }
+        val player = Audio(this)
         val channels = Channels(this)
+        buttonStartStop.setOnClickListener {
+        isTraining = !isTraining
+            if (isTraining) {
+                buttonStartStop.text = "STOP"
+                player.play()
+                buttonStartStop.setBackgroundColor(Color.RED)
+            } else {
+                buttonStartStop.text = "START"
+                player.stop()
+                buttonStartStop.setBackgroundColor(Color.GREEN)
+            }
+
+        }
 
         buttonAll.setOnClickListener {
             channels.channels.forEach { c -> c.showAllWaves() }
@@ -101,13 +115,14 @@ class MainActivity : AppCompatActivity() {
             .subscribe { packet ->
                 channels.pushValueInEachChannel(packet)
                 channels.updateMinMaxVisualizers()
-                volume = player.setVolume(channels.computeVolume(seekBar.progress))
+                if (isTraining) {
+                    volume = player.setVolume(channels.computeVolume(seekBar.progress))
+                }
             }
 
         io.reactivex.rxjava3.core.Observable.interval(100, TimeUnit.MILLISECONDS)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                Log.i("Thread", "name is ${Thread.currentThread().name }}")
                 textMax.text = channels.yMaxOfAllChannels.toInt().toString()
                 textVolume.text = "${(volume * 100).toInt()}%"
             }

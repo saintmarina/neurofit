@@ -1,20 +1,22 @@
 package com.saintmarina.alphatraining
 
 import android.content.Context
-import android.media.MediaParser
 import android.media.MediaPlayer
-import android.util.Log
-import kotlin.math.ln
 
-class Audio(context: Context) {
-    val player:MediaPlayer = MediaPlayer.create(context, R.raw.mixed_binaural_beat_10m)
+
+class Audio(var context: Context) {
+    var player:MediaPlayer? = null
 
     fun play() {
-        player.start()
+        player = MediaPlayer.create(context, R.raw.mixed_binaural_beat_10m)
+        player!!.isLooping = true
+        player!!.start()
     }
 
     fun stop() {
-        player.stop()
+        player?.stop()
+        player?.release()
+        player = null
     }
 
     fun setVolume(volume_: Float): Float {
@@ -23,7 +25,7 @@ class Audio(context: Context) {
         if (volume < 0.05f) {
             volume = 0.05f
         }
-        player.setVolume(volume, volume)
+        player?.setVolume(volume, volume)
         return volume
     }
 }
