@@ -2,8 +2,10 @@ package com.saintmarina.alphatraining
 
 import android.content.Context
 import android.graphics.*
+import android.util.Log
 import android.view.View
 import androidx.core.graphics.withMatrix
+import java.util.*
 
 class WaveVisualizer(context: Context) : View(context) {
     var values: DoubleCircularArray = DoubleCircularArray(NUM_POINTS_ON_SCREEN)
@@ -21,6 +23,27 @@ class WaveVisualizer(context: Context) : View(context) {
         strokeWidth = 0F
         style = Paint.Style.STROKE
         isAntiAlias = true
+    }
+
+    private val pointsArray:FloatArray = FloatArray(NUM_SECS_ON_SCREEN * 4)
+    private val gridPaint = Paint().apply {
+        color = Color.parseColor("#F2F3F4")
+        strokeWidth = 2F
+        style = Paint.Style.STROKE
+        isAntiAlias = true
+    }
+    private fun populateWithPoints(pointsArray: FloatArray, height: Float, width: Float){
+        var counter = 1
+
+        for (i in pointsArray.indices) {
+            val value:Float = when {
+                counter % 4 == 0 -> height
+                counter % 2 == 0 -> 0F
+                else -> (i/4) * (width/NUM_SECS_ON_SCREEN)
+            }
+            pointsArray[i] = value
+            counter++
+        }
     }
 
     override fun onDraw(canvas: Canvas?) {
@@ -51,9 +74,13 @@ class WaveVisualizer(context: Context) : View(context) {
         m.postScale(width / (-n + 1), height / (yMin - yMax))
         m.postTranslate(width, height)
 
-        canvas!!.withMatrix(m) {
+        // Drawing grid first, so the grids is under the brainwaves
+        populateWithPoints(pointsArray, height, width)
+        canvas!!.drawLines(pointsArray, gridPaint)
+
+        canvas.withMatrix(m) {
             drawLines(points, paint)
         }
-        canvas.draw
+
     }
 }

@@ -25,7 +25,7 @@ package com.saintmarina.alphatraining
 // * if the button is pressed the user would start hearing Alpha Waves
 // * else there would be so sound
 // TODO UI: make the channels look more scientific
-// * every second have a light gray line dividing the channel
+// YES * every second have a light gray line dividing the channel
 // * on the very top put numbers (for seconds) give a white contour(outline)
 // TODO SEEKBAR:
 // * make it shorter (add right and left margins)
