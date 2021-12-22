@@ -11,6 +11,10 @@ package com.saintmarina.alphatraining
  * connected via USB (should say [DISCONECTED]) and the other via WiFi. You are interested in the
  * one that doesn't have the [DISCONECTED] note nest to it.
  * Good luck!
+ * If the Logcat crashed with NullPointerException (doesn't respond) in the terminal type:
+ * adb kill-server
+ * adb connect 192.168.0.219:4444
+ * The Android Studio should have reconnected with the decive.
 */
 
 // YES TODO what about an idea of making a separate class for channels array

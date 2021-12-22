@@ -25,25 +25,24 @@ class WaveVisualizer(context: Context) : View(context) {
         isAntiAlias = true
     }
 
-    private val pointsArray:FloatArray = FloatArray(NUM_SECS_ON_SCREEN * 4)
-    private val gridPaint = Paint().apply {
-        color = Color.parseColor("#F2F3F4")
-        strokeWidth = 2F
-        style = Paint.Style.STROKE
-        isAntiAlias = true
-    }
-    private fun populateWithPoints(pointsArray: FloatArray, height: Float, width: Float){
+    private val pointsArray:FloatArray = FloatArray(NUM_SECS_ON_SCREEN * 4).apply {
         var counter = 1
-
-        for (i in pointsArray.indices) {
+        for (i in this.indices) {
             val value:Float = when {
-                counter % 4 == 0 -> height
+                counter % 4 == 0 -> 1F
                 counter % 2 == 0 -> 0F
-                else -> (i/4) * (width/NUM_SECS_ON_SCREEN)
+                else -> (i/4)/NUM_SECS_ON_SCREEN.toFloat()
             }
-            pointsArray[i] = value
+            this[i] = value
             counter++
         }
+        Log.i("Grid", this.joinToString (","))
+    }
+    private val gridPaint = Paint().apply {
+        color = Color.parseColor("#E0E0E0")
+        strokeWidth = 0F
+        style = Paint.Style.STROKE
+        isAntiAlias = true
     }
 
     override fun onDraw(canvas: Canvas?) {
@@ -69,15 +68,17 @@ class WaveVisualizer(context: Context) : View(context) {
             points[4 * (i - 1) + 3] = py
         }
 
+        // Drawing grid first, so the grids is under the brainwaves
+        m.reset()
+        m.postScale(width, height)
+        canvas!!.withMatrix(m) {
+            drawLines(pointsArray, gridPaint)
+        }
+
         m.reset()
         m.preTranslate(0.0f, -yMin)
         m.postScale(width / (-n + 1), height / (yMin - yMax))
         m.postTranslate(width, height)
-
-        // Drawing grid first, so the grids is under the brainwaves
-        populateWithPoints(pointsArray, height, width)
-        canvas!!.drawLines(pointsArray, gridPaint)
-
         canvas.withMatrix(m) {
             drawLines(points, paint)
         }
