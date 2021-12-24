@@ -17,25 +17,12 @@ package com.saintmarina.alphatraining
  * The Android Studio should have reconnected with the decive.
 */
 
-// YES TODO what about an idea of making a separate class for channels array
-// YES TODO disable screen rotation
-// YES FIXME UI FREEZING BUG:
-// * get rid of runOnUiThread. Make instance variables that will be set everytime we push a packet.
-// * Have separate RxJava "observable.schedule on Main Thread wiht an interval", there update instance variables
-// YES TODO take out 0, 50, 100 buttons
-// YES TODO TOGGLE BUTTON:
-// * the button would be green, once pressed it would turn red
-// * the button would indicate start/stop training (toggle the text START/STOP)
-// * if the button is pressed the user would start hearing Alpha Waves
-// * else there would be so sound
-// TODO UI: make the channels look more scientific
-// YES * every second have a light gray line dividing the channel
-// * on the very top put numbers (for seconds) give a white contour(outline)
 // TODO SEEKBAR:
-// * make it shorter (add right and left margins)
-// * Add a TOGGLE BUTTON autoscale. When on the seekbar is disabled, and the yMax is the max of all channel maxes combined ( of what is being displayed Allwaves/AlphaWaves/ etc.)
-// * When off the  seekbar is enabled and it pick the yMax = 300*100/(seekbar.progress)
-// * the volume should always be the envelopeValue/yMax
+// * edit AUTOSCALE button to be a toggle button
+// TODO UI: make the channels look more scientific
+// * on the very top put numbers (for seconds) give a white contour(outline)
+// TODO change color of the buttons(AllWaves, AlphaWaves, EnvWaves) when it's selected
+// TODO put all the channelVisualizers into a UI container and they should fill the entire container height and width
 // TODO count the score of the session
 // * calculation for the score:  average of the volume(alpha waves)
 // * have a DoubleCircularArray for each score
@@ -46,25 +33,31 @@ package com.saintmarina.alphatraining
 // FIXME prevent the app from crashing when the OpenBCI is unplugged
 // * Display a dialogue box and
 // * if in the middle of a training session, save all the relevant data to be able to continue
-// TODO think about 5-6 seconds alpha wave bursts combos
 
+// TODO think about 5-6 seconds alpha wave bursts combos
+// TODO think about adding an instructions/tutorial activity
+// TODO make each channel of a different color (corresponding to the wire color of the OpenBCI electrodes)
 
 import android.annotation.SuppressLint
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.TextView
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjava3.core.Observable
 import java.util.concurrent.TimeUnit
 
 @SuppressLint("SetTextI18n")
 class MainActivity : AppCompatActivity() {
     var volume: Float = 0.0f
     var isTraining = false
+    var isAutoScaling = false
+    var isEnvelope = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,39 +71,60 @@ class MainActivity : AppCompatActivity() {
                 setBackgroundColor(Color.GREEN)
                 text = "START"
             }
+        val buttonAutoScale = findViewById<Button>(R.id.button_autoscale)
 
         val textMax = findViewById<TextView>(R.id.textMax)
         val textVolume = findViewById<TextView>(R.id.textVolume)
         val seekBar = findViewById<SeekBar>(R.id.seekBar)
-
+        fun refreshAutoScalingUI() {
+            if (isAutoScaling) {
+                buttonAutoScale.setBackgroundColor(Color.parseColor("#FF6200EE")) // Took it from colors.xml
+                seekBar.isEnabled = false
+            } else {
+                buttonAutoScale.setBackgroundColor(Color.LTGRAY)
+                seekBar.isEnabled = true
+            }
+        }
+        refreshAutoScalingUI()
 
         val player = Audio(this)
-        val channels = Channels(this)
+        val channels = Channels(Array(8) { ChannelOrganizer(this) })
+
+        buttonAutoScale.setOnClickListener {
+            isAutoScaling = !isAutoScaling
+            refreshAutoScalingUI()
+        }
+
         buttonStartStop.setOnClickListener {
-        isTraining = !isTraining
+            isTraining = !isTraining
             if (isTraining) {
                 buttonStartStop.text = "STOP"
-                player.play()
                 buttonStartStop.setBackgroundColor(Color.RED)
+                player.play()
             } else {
                 buttonStartStop.text = "START"
-                player.stop()
                 buttonStartStop.setBackgroundColor(Color.GREEN)
+                player.stop()
             }
-
         }
 
         buttonAll.setOnClickListener {
             channels.channels.forEach { c -> c.showAllWaves() }
+            isEnvelope = false
         }
         buttonAlpha.setOnClickListener {
             channels.channels.forEach { c -> c.showAlphaWaves() }
+            isEnvelope = false
         }
         buttonEnvelope.setOnClickListener {
             channels.channels.forEach { c -> c.showAlphaEnvelopeWaves() }
+            isEnvelope = true
         }
 
-        channels.addToLayout(linearLayout)
+        channels.channels.forEach { c -> linearLayout.addView(
+            c.visualizer,
+            LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 200))
+        }
 
         // Populating data IRL
         OpenBCI(this)
@@ -118,17 +132,20 @@ class MainActivity : AppCompatActivity() {
             .subscribeOn(Schedulers.newThread())
             .subscribe { packet ->
                 channels.pushValueInEachChannel(packet)
-                channels.updateMinMaxVisualizers()
-                if (isTraining) {
-                    volume = player.setVolume(channels.computeVolume(seekBar.progress))
-                }
+                if (isAutoScaling)
+                    channels.autoscale()
+                else
+                    channels.setScale(seekBar.progress, isEnvelope)
+                volume = channels.computeVolume(seekBar.progress)
+                if (isTraining)
+                    player.setVolume(volume)
             }
 
-        io.reactivex.rxjava3.core.Observable.interval(100, TimeUnit.MILLISECONDS)
+        Observable.interval(100, TimeUnit.MILLISECONDS)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                textMax.text = channels.yMaxOfAllChannels.toInt().toString()
-                textVolume.text = "${(volume * 100).toInt()}%"
+                textMax.text = "yMax = ${channels.yMaxOfAllChannels.toInt()}"
+                textVolume.text = "volume = ${(volume * 100).toInt()}%"
             }
     }
 }
