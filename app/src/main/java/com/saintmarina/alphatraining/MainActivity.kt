@@ -19,9 +19,9 @@ package com.saintmarina.alphatraining
 
 // TODO SEEKBAR:
 // * edit AUTOSCALE button to be a toggle button
+// TODO make all the buttons to be <ToggleButton>
 // TODO UI: make the channels look more scientific
 // * on the very top put numbers (for seconds) give a white contour(outline)
-// TODO change color of the buttons(AllWaves, AlphaWaves, EnvWaves) when it's selected
 // TODO put all the channelVisualizers into a UI container and they should fill the entire container height and width
 // TODO count the score of the session
 // * calculation for the score:  average of the volume(alpha waves)
