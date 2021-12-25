@@ -6,40 +6,47 @@
     android:layout_height="match_parent"
     android:id="@+id/linear_layout"
     android:orientation="vertical"
+    android:gravity="center_horizontal"
     tools:context=".MainActivity">
-    <Button
+    <ToggleButton
         android:id="@+id/start_stop_toggle_button"
         android:layout_width="100dp"
         android:layout_height="75dp"
-        android:layout_gravity="center"/>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:orientation="horizontal">
+        android:layout_gravity="center"
+        android:textOff="START"
+        android:textOn="STOP"/>
 
-        <Button
-            android:id="@+id/button_all_waves"
-            android:layout_width="100dp"
-            android:layout_height="65dp"
-            android:layout_gravity="start"
-            android:layout_marginEnd="20dp"
-            android:text="All Waves"/>
-        <Button
-            android:id="@+id/button_alpha_waves"
-            android:layout_width="100dp"
-            android:layout_height="65dp"
-            android:layout_gravity="center"
-            android:text="Alpha Waves"/>
-        <Button
-            android:id="@+id/button_envelope_waves"
-            android:layout_width="100dp"
-            android:layout_height="65dp"
-            android:layout_gravity="end"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:text="Env Waves"/>
-    </LinearLayout>
+    <RadioGroup
+        android:id="@+id/radioWaves"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checkedButton="@id/radioAllWaves"
+
+        android:orientation="horizontal">
+        <RadioButton
+            android:id="@+id/radioAllWaves"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="30dp"
+            android:layout_margin="10dp"
+            android:text="AllWaves" />
+
+        <RadioButton
+            android:id="@+id/radioAlphaWaves"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:textSize="30dp"
+            android:text="AlphaWaves" />
+
+        <RadioButton
+            android:id="@+id/radioEnvWaves"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:textSize="30dp"
+            android:text="EnvWaves" />
+    </RadioGroup>
 
     <TextView
         android:id="@+id/textMax"
@@ -70,14 +77,9 @@
             android:max="1000"
             android:min="1"/>
         <ToggleButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-        <Button
             android:id="@+id/button_autoscale"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:layout_marginStart="20dp"
-            android:text="AUTOSCALE"/>
+            android:layout_height="wrap_content"/>
     </LinearLayout>
 
 </LinearLayout>
