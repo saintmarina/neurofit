@@ -36,7 +36,6 @@ class WaveVisualizer(context: Context) : View(context) {
             this[i] = value
             counter++
         }
-        Log.i("Grid", this.joinToString (","))
     }
     private val gridPaint = Paint().apply {
         color = Color.parseColor("#E0E0E0")

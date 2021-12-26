@@ -17,8 +17,6 @@ package com.saintmarina.alphatraining
  * The Android Studio should have reconnected with the decive.
 */
 
-// TODO UI: make the channels look more scientific
-// * on the very top put numbers (for seconds) give a white contour(outline)
 // TODO put all the channelVisualizers into a UI container and they should fill the entire container height and width
 // TODO count the score of the session
 // * calculation for the score:  average of the volume(alpha waves)
@@ -50,7 +48,7 @@ import java.util.concurrent.TimeUnit
 class MainActivity : AppCompatActivity() {
     var volume: Float = 0.0f
     //var isEnvelope = false
-
+  //  Log.i("Grid", this.joinToString (","))
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -95,6 +93,8 @@ class MainActivity : AppCompatActivity() {
             c.visualizer,
             LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 200))
         }
+        val gridOfSeconds = GridOfSeconds(this)
+        linearLayout.addView(gridOfSeconds)
 
         // Populating data IRL
         OpenBCI(this)
