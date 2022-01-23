@@ -1,5 +1,5 @@
 package com.saintmarina.alphatraining
-/* Set up WiFi debuging
+/* Set up WiFi debugging
  * Connect the Tablet to the Laptop via USB-C cable
  * In terminal:
  * adb shell setprop service.adb.tcp.port # probably not needed
@@ -7,25 +7,26 @@ package com.saintmarina.alphatraining
  * adb connect 192.168.0.219:4444
  * Disconnect USB cable.
  * Done.
+ * IF DOESN'T WORK: check ip address on the tablet About tablet->Status Information->IP Address
+ * run adb connect ...new ip address
  * In the Logcat: make sure to choose correct device. There should be two devices: one that is
- * connected via USB (should say [DISCONECTED]) and the other via WiFi. You are interested in the
- * one that doesn't have the [DISCONECTED] note nest to it.
+ * connected via USB (should say [DISCONNECTED]) and the other via WiFi. You are interested in the
+ * one that doesn't have the [DISCONNECTED] note nest to it.
  * Good luck!
  * If the Logcat crashed with NullPointerException (doesn't respond) in the terminal type:
  * adb kill-server
  * adb connect 192.168.0.219:4444
- * The Android Studio should have reconnected with the decive.
+ * The Android Studio should have reconnected with the device.
 */
 
-// TODO put all the channelVisualizers into a UI container and they should fill the entire container height and width
+// TODO add a timer to time the session
+// FIXME prevent the app from crashing when the OpenBCI is unplugged
 // TODO count the score of the session
 // * calculation for the score:  average of the volume(alpha waves)
 // * have a DoubleCircularArray for each score
 // * have a score for the LAST 1 minute (for calibrating) all the time
 // * LAST 10 minutes
 // * WHOLE SESSION
-// TODO add a timer to time the session
-// FIXME prevent the app from crashing when the OpenBCI is unplugged
 // * Display a dialogue box and
 // * if in the middle of a training session, save all the relevant data to be able to continue
 
@@ -37,6 +38,7 @@ import android.annotation.SuppressLint
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.ViewGroup
 import android.widget.*
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -46,13 +48,12 @@ import java.util.concurrent.TimeUnit
 
 @SuppressLint("SetTextI18n")
 class MainActivity : AppCompatActivity() {
+
     var volume: Float = 0.0f
-    //var isEnvelope = false
-  //  Log.i("Grid", this.joinToString (","))
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val linearLayout = findViewById<LinearLayout>(R.id.linear_layout)
+        val containerLayout = findViewById<LinearLayout>(R.id.vizContainerLayout)
         val radioGroup = findViewById<RadioGroup>(R.id.radioWaves)
         val buttonStartStop = findViewById<ToggleButton>(R.id.start_stop_toggle_button)
             .apply {
@@ -75,7 +76,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        buttonStartStop.setOnCheckedChangeListener{ _, isChecked ->
+        buttonStartStop.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 buttonStartStop.setBackgroundColor(Color.RED)
                 player.play()
@@ -89,12 +90,26 @@ class MainActivity : AppCompatActivity() {
             seekBar.isEnabled = !isChecked
         }
 
-        channels.channels.forEach { c -> linearLayout.addView(
-            c.visualizer,
-            LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 200))
+        // Fill up the container layout and add it to the parent layout
+        channels.channels.forEach { c ->
+            containerLayout.addView(
+                c.visualizer.apply {
+                    layoutParams = LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        0,
+                        4f
+                    )
+                }
+            )
         }
-        val gridOfSeconds = GridOfSeconds(this)
-        linearLayout.addView(gridOfSeconds)
+
+        containerLayout.addView(GridOfSeconds(this).apply {
+            layoutParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                0,
+                1f
+            )
+        })
 
         // Populating data IRL
         OpenBCI(this)
@@ -120,5 +135,6 @@ class MainActivity : AppCompatActivity() {
             }
     }
 }
+
 
 
