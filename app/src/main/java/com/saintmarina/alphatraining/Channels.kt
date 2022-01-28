@@ -44,6 +44,8 @@ class Channels(val channels: Array<ChannelOrganizer>) {
     fun pushValueInEachChannel(packet: OpenBCI.Packet) {
         for (i in 0 until CHANNELS) {
             channels[i].pushValue(packet.channels[i])
+            //bytearray.pushFloat(packet.channels[i])
         }
+        //file.write(bytearray)
     }
 }

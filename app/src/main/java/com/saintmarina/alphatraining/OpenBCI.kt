@@ -11,8 +11,7 @@ import com.hoho.android.usbserial.driver.UsbSerialPort
 import com.hoho.android.usbserial.driver.UsbSerialProber
 import io.reactivex.rxjava3.core.Observable
 import java.lang.Exception
-
-
+import java.nio.ByteBuffer
 
 class OpenBCI(context: Context){
     companion object {
@@ -34,7 +33,16 @@ class OpenBCI(context: Context){
     class Packet(
         var sampleNumber: Int,
         var channels: DoubleArray,
-    )
+    ) {
+        fun fillByteBuf(buf: ByteBuffer) {
+            buf.apply {
+                putInt(sampleNumber)
+                for (ch in channels) {
+                    putFloat(ch.toFloat())
+                }
+            }
+        }
+    }
 
     init {
         // Open port the OpenBCI device
