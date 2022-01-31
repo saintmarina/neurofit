@@ -40,6 +40,7 @@ package com.saintmarina.alphatraining
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Environment
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -165,7 +166,7 @@ class MainActivity : AppCompatActivity() {
         fun maybeWriteBrainData(packet: OpenBCI.Packet) {
             when {
                 isRecording && brainFile == null -> {
-                    brainFile = BrainFile()
+                    brainFile = BrainFile(this)
                     brainFile?.write(packet)
                 }
                 isRecording && brainFile != null -> {

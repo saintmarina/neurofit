@@ -1,6 +1,6 @@
 package com.saintmarina.alphatraining
 
-import android.os.Build
+import android.content.Context
 import android.os.Environment
 import java.io.File
 import java.io.FileOutputStream
@@ -10,15 +10,15 @@ import java.util.*
 
 
 private const val FILE_NAME_FMT: String = "yyyy-MM-d HH.mm.ss"
-//val destination = File("/sdcard")
 
-class BrainFile {
-    private var outputStream: FileOutputStream = FileOutputStream(File(commonDocumentDirPath("AlphaTraining"), getBaseName()))
+class BrainFile(private val context: Context) {
+    private var outputStream: FileOutputStream = FileOutputStream(File(commonDocumentDirPath(), getBaseName()))
     private var byteBuffer: ByteBuffer = ByteBuffer.allocate(36)
 
     fun write(packet: OpenBCI.Packet) {
         byteBuffer.position(0)
         packet.fillByteBuf(byteBuffer)
+        byteBuffer.position(0)
         outputStream.channel.write(byteBuffer)
     }
 
@@ -27,25 +27,17 @@ class BrainFile {
         outputStream.close()
     }
 
-    private fun commonDocumentDirPath(folderName: String): File? {
-        var dir: File? = null
-        dir = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            File(
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
-                    .toString() + "/" + folderName
-            )
-        } else {
-            File(Environment.getExternalStorageDirectory().toString() + "/" + folderName)
-        }
+    private fun commonDocumentDirPath(): File? {
+       /* val dir = File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)?.absolutePath + File.separator +"AlphaTraining")
+        Log.i("FileRecorder", "dir is: $dir")
+        Log.i("FileRecorder", "succeeded to create a dir: ${dir.mkdir()}")
+        return dir*/
 
-        // Make sure the path directory exists.
-        if (!dir.exists()) {
-            // Make it, if it doesn't exit
-            val success = dir.mkdirs()
-            if (!success) {
-                dir = null
-            }
-        }
+        val dir = File(
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS),
+            "AlphaTraining"
+        )
+        dir.mkdirs()
         return dir
     }
 
