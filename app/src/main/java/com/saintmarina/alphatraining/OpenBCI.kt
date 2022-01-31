@@ -42,6 +42,17 @@ class OpenBCI(context: Context){
                 }
             }
         }
+
+        companion object {
+            fun fromByteBuf(buf: ByteBuffer): Packet {
+                val sampleNumber = buf.getInt()
+                val channels = DoubleArray(8)
+                for (ch in channels.indices) {
+                    channels[ch] = buf.getFloat().toDouble()
+                }
+                return Packet(sampleNumber, channels)
+            }
+        }
     }
 
     init {

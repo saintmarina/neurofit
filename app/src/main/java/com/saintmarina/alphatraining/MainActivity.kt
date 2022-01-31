@@ -40,7 +40,6 @@ package com.saintmarina.alphatraining
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
-import android.os.Environment
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -102,7 +101,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        var brainFile: BrainFile? = null
+        var brainFileWriter: BrainFile.Writer? = null
         /***BUTTONS LOGIC***/
         buttonStartStop.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
@@ -165,20 +164,22 @@ class MainActivity : AppCompatActivity() {
 
         fun maybeWriteBrainData(packet: OpenBCI.Packet) {
             when {
-                isRecording && brainFile == null -> {
-                    brainFile = BrainFile(this)
-                    brainFile?.write(packet)
+                isRecording && brainFileWriter == null -> {
+                    brainFileWriter = BrainFile().Writer()
+                    brainFileWriter?.writePacket(packet)
                 }
-                isRecording && brainFile != null -> {
-                    brainFile?.write(packet)
+                isRecording && brainFileWriter != null -> {
+                    brainFileWriter?.writePacket(packet)
                 }
-                !isRecording && brainFile != null -> {
-                    brainFile?.close()
-                    brainFile = null
+                !isRecording && brainFileWriter != null -> {
+                    brainFileWriter?.close()
+                    brainFileWriter = null
+
                 }
                 else  -> {} // Left intentionally blank
             }
         }
+
 
         // Populating data IRL
         OpenBCI(this)
