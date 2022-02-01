@@ -1,14 +1,10 @@
 package com.saintmarina.alphatraining
 
-import android.content.Context
 import android.os.Environment
-import android.util.Log
-
 import io.reactivex.rxjava3.core.Observable
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
-import java.io.RandomAccessFile
 import java.lang.Exception
 import java.nio.ByteBuffer
 import java.text.SimpleDateFormat
@@ -55,6 +51,7 @@ class BrainFile() {
                         val packet = readPacket()
                         if (packet != null) {
                             emitter.onNext(packet)
+                            Thread.sleep(4)
                         } else {
                             break
                         }

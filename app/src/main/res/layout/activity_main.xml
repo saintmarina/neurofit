@@ -8,6 +8,35 @@
     android:orientation="vertical"
     android:gravity="center_horizontal"
     tools:context=".MainActivity">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity=""
+        android:orientation="horizontal">
+        <ToggleButton
+            android:id="@+id/real_time"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="30dp"
+            android:textOff="REAL-TIME"
+            android:textOn="STOP REAL-TIME"/>
+        <ToggleButton
+            android:id="@+id/start_stop_recording"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:textOff="RECORD SESSION"
+            android:textOn="STOP RECORDING"/>
+        <ToggleButton
+            android:id="@+id/replay"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="30dp"
+            android:textOff="REPLAY"
+            android:textOn="STOP REPLAYING"/>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -21,54 +50,9 @@
             android:layout_gravity="center"
             android:textOff="START"
             android:textOn="STOP"/>
-        <ToggleButton
-            android:id="@+id/start_stop_recording"
-            android:layout_width="wrap_content"
-            android:layout_height="75dp"
-            android:layout_gravity="center"
-            android:textOff="RECORD SESSION"
-            android:textOn="STOP RECORDING"/>
+
     </LinearLayout>
-    <ToggleButton
-        android:id="@+id/replay"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_gravity="center"
-        android:textOff="REPLAY"
-        android:textOn="STOP REPLAYING"/>
 
-
-    <RadioGroup
-        android:id="@+id/radioWaves"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:checkedButton="@id/radioAllWaves"
-
-        android:orientation="horizontal">
-        <RadioButton
-            android:id="@+id/radioAllWaves"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="30dp"
-            android:layout_margin="10dp"
-            android:text="AllWaves" />
-
-        <RadioButton
-            android:id="@+id/radioAlphaWaves"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:textSize="30dp"
-            android:text="AlphaWaves" />
-
-        <RadioButton
-            android:id="@+id/radioEnvWaves"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:textSize="30dp"
-            android:text="EnvWaves" />
-    </RadioGroup>
 
     <TextView
         android:id="@+id/textMax"
@@ -103,6 +87,37 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
     </LinearLayout>
+    <RadioGroup
+        android:id="@+id/radioWaves"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checkedButton="@id/radioAllWaves"
+
+        android:orientation="horizontal">
+        <RadioButton
+            android:id="@+id/radioAllWaves"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="30dp"
+            android:layout_margin="10dp"
+            android:text="AllWaves" />
+
+        <RadioButton
+            android:id="@+id/radioAlphaWaves"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:textSize="30dp"
+            android:text="AlphaWaves" />
+
+        <RadioButton
+            android:id="@+id/radioEnvWaves"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:textSize="30dp"
+            android:text="EnvWaves" />
+    </RadioGroup>
     <LinearLayout
         android:id="@+id/vizContainerLayout"
         android:layout_width="match_parent"

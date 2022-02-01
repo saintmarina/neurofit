@@ -65,15 +65,11 @@ class OpenBCI(context: Context){
 
         val driver: UsbSerialDriver = availableDrivers[0]
         // Check Permissions
-        val hasPermission = manager.hasPermission(driver.device)
-        if (!hasPermission) {
-            // TODO implement proper permission check
-            // This permission check doesn't block the main Thread from executing
-            // When the app run for the first time, the window requesting permission will pop up
-            // The app will crash
+        while (!manager.hasPermission(driver.device)) { // If we don't have permission, keep asking for it
             val usbPermissionIntent =
                 PendingIntent.getBroadcast(context.applicationContext, 0, Intent(INTENT_ACTION_GRANT_USB), 0)
             manager.requestPermission(driver.device, usbPermissionIntent)
+            Thread.sleep(100) // Avoid burning CPU
         }
 
         val connection: UsbDeviceConnection = manager.openDevice(driver.device)

@@ -37,14 +37,20 @@ package com.saintmarina.alphatraining
 // TODO think about adding an instructions/tutorial activity
 // TODO make each channel of a different color (corresponding to the wire color of the OpenBCI electrodes)
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.pm.PackageManager
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
@@ -57,32 +63,18 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-       /* if (Build.VERSION.SDK_INT >= 23) {
-            val permissions = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE)
-            if (!hasPermissions(permissions)) {
-                ActivityCompat.requestPermissions((this as Activity?)!!, permissions, REQUEST)
-            } else {
-                Log.i("Tag1", "All permissions granted")
-                //do here
-            }
-        } else {
-            Log.i("Tag2", "The OS version is less than what I have")
-            //do here
-        }*/
-
+        checkPermissions()
 
         val containerLayout = findViewById<LinearLayout>(R.id.vizContainerLayout)
         val radioGroup = findViewById<RadioGroup>(R.id.radioWaves)
 
         /***BUTTONS***/
         val buttonStartStop = findViewById<ToggleButton>(R.id.start_stop_toggle_button)
-            .apply {
-                setBackgroundColor(Color.GREEN)
-            }
+            .apply { setBackgroundColor(Color.GREEN) }
         val buttonStartStopRecording = findViewById<ToggleButton>(R.id.start_stop_recording)
 
         val buttonReplay = findViewById<ToggleButton>(R.id.replay)
+        val buttonRealTime = findViewById<ToggleButton>(R.id.real_time)
         /***/
 
         val seekBar = findViewById<SeekBar>(R.id.seekBar)
@@ -102,7 +94,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         var brainFileWriter: BrainFile.Writer? = null
-        /***BUTTONS LOGIC***/
+
         buttonStartStop.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 buttonStartStop.setBackgroundColor(Color.RED)
@@ -118,23 +110,6 @@ class MainActivity : AppCompatActivity() {
             isRecording = isChecked
 
         }
-/*
-        var packetStream = OpenBCI(this).createPacketStreamObservable()
-        buttonReplay.setOnCheckedChangeListener { _, isChecked ->
-            packetStream = if (!isChecked) {
-                OpenBCI(this).createPacketStreamObservable()
-            } else {
-                file.createPacketStreamObservable()
-            }
-        }
-        var packetStream = if (replay) {
-            brainFile("thefile.bd")
-                .createPAcketStreamObserveable)
-            else {
-            openBCI(this)
-                .createOAcketStreamObsergable()
-        }*/
-        /***/
 
         buttonAutoScale.setOnCheckedChangeListener { _, isChecked ->
             seekBar.isEnabled = !isChecked
@@ -180,66 +155,80 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        fun updateMusicVolume() {
+            val isEnv = radioGroup.checkedRadioButtonId == R.id.radioEnvWaves
+            if (buttonAutoScale.isChecked)
+                channels.autoscale()
+            else
+                channels.setScale(seekBar.progress, isEnv)
+            volume = channels.computeVolume(channels.limit)
+            if (buttonStartStop.isChecked)
+                player.setVolume(volume)
+        }
 
-        // Populating data IRL
-        OpenBCI(this)
-            .createPacketStreamObservable()
-            .subscribeOn(Schedulers.newThread())
-            .subscribe { packet ->
-                maybeWriteBrainData(packet)
+        fun processPacket(packet: OpenBCI.Packet) {
+            maybeWriteBrainData(packet)
+            channels.pushValueInEachChannel(packet)
+            updateMusicVolume()
+        }
 
-                channels.pushValueInEachChannel(packet)
-                val isEnv = radioGroup.checkedRadioButtonId == R.id.radioEnvWaves
-                if (buttonAutoScale.isChecked)
-                    channels.autoscale()
-                else
-                    channels.setScale(seekBar.progress, isEnv)
-                volume = channels.computeVolume(seekBar.progress)
-                if (buttonStartStop.isChecked)
-                    player.setVolume(volume)
+
+        val subscribePacketProcessor = run {
+            var packetStream: Disposable? = null
+
+            { enable: Boolean, src: () -> Observable<OpenBCI.Packet> ->
+                packetStream?.dispose()
+                packetStream = if (enable) {
+                    src().subscribeOn(Schedulers.newThread())
+                        .subscribe { packet -> processPacket(packet) }
+                } else {
+                    null
+                }
             }
+        }
+
+        buttonRealTime.setOnCheckedChangeListener { _, isChecked ->
+            subscribePacketProcessor(isChecked) {
+                OpenBCI(this).createPacketStreamObservable()
+            }
+        }
+
+        buttonReplay.setOnCheckedChangeListener { _, isChecked ->
+            subscribePacketProcessor(isChecked) {
+                BrainFile().Reader().createPacketStreamObservable()
+            }
+        }
 
         Observable.interval(100, TimeUnit.MILLISECONDS)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                textMax.text = "yMax = ${channels.yMaxOfAllChannels.toInt()}"
+                textMax.text = "limit = ${channels.limit.toInt()} µV"
                 textVolume.text = "volume = ${(volume * 100).toInt()}%"
             }
     }
-}
-/*
+
+    private fun checkPermissions() {
+         if (Build.VERSION.SDK_INT >= 23) {
+           val permissions = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE)
+           while (!hasPermissions(permissions)) { // If we don't have permission, keep asking for it
+               ActivityCompat.requestPermissions((this as Activity), permissions, REQUEST)
+               Thread.sleep(100) // Avoid burning CPU
+           }
+       }
+    }
+
     private fun hasPermissions(permissions: Array<String>): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             for (permission in permissions) {
                 if (ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
-                    return false;
+                    return false
                 }
             }
         }
         return true
     }
+}
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            REQUEST -> {
-                if (grantResults.isNotEmpty() && grantResults[0] === PackageManager.PERMISSION_GRANTED) {
-                    //do here
-                } else {
-                    Toast.makeText(
-                        this,
-                        "The app was not allowed to write in your storage",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-            }
-        }
-    }*/
-//}
 
 
 

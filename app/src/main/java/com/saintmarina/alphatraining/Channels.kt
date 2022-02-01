@@ -7,7 +7,7 @@ import kotlin.math.pow
 const val CHANNELS = 8
 
 class Channels(val channels: Array<ChannelOrganizer>) {
-    var yMaxOfAllChannels = 0F
+    var limit = 0F
 
     fun autoscale() {
         var yMax = 1.0f
@@ -20,7 +20,7 @@ class Channels(val channels: Array<ChannelOrganizer>) {
             c.visualizer.yMax = yMax
             c.visualizer.yMin = yMin
         }
-        yMaxOfAllChannels = channels[0].visualizer.yMax
+        limit = yMax
     }
 
     fun setScale(sensitivity: Int, envelopeWave: Boolean) {
@@ -29,16 +29,16 @@ class Channels(val channels: Array<ChannelOrganizer>) {
             c.visualizer.yMax = yMax
             c.visualizer.yMin = if (envelopeWave) 0F else -yMax
         }
-        yMaxOfAllChannels = yMax
+        limit = yMax
     }
 
-    fun computeVolume(progress: Int): Float {
+    fun computeVolume(limit: Float): Float {
         var envelopeAverage = 0.00
         for (i in 0 until CHANNELS) {
             envelopeAverage += channels[i].alphaEnvelopeV
         }
         envelopeAverage /= CHANNELS
-        return (envelopeAverage/(progress+1)).toFloat() // Here adding 1 so we never divide by 0
+        return envelopeAverage.toFloat()/(limit+1F) // Here adding 1 so we never divide by 0
     }
 
     fun pushValueInEachChannel(packet: OpenBCI.Packet) {
