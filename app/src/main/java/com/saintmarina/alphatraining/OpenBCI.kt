@@ -6,12 +6,13 @@ import android.content.Intent
 import android.hardware.usb.UsbDeviceConnection
 import android.hardware.usb.UsbManager
 import android.util.Log
+import android.widget.Toast
 import com.hoho.android.usbserial.driver.UsbSerialDriver
 import com.hoho.android.usbserial.driver.UsbSerialPort
 import com.hoho.android.usbserial.driver.UsbSerialProber
 import io.reactivex.rxjava3.core.Observable
-import java.lang.Exception
 import java.nio.ByteBuffer
+
 
 class OpenBCI(context: Context){
     companion object {
@@ -60,22 +61,25 @@ class OpenBCI(context: Context){
         val manager: UsbManager = context.applicationContext.getSystemService(Context.USB_SERVICE) as UsbManager
         val availableDrivers: List<UsbSerialDriver> = UsbSerialProber.getDefaultProber().findAllDrivers(manager)
         if (availableDrivers.isEmpty()) {
-            throw RuntimeException("OpenBCI device was not found, try restarting everything")
+            throw RuntimeException("OpenBCI device was not found")
         }
 
         val driver: UsbSerialDriver = availableDrivers[0]
         // Check Permissions
-        while (!manager.hasPermission(driver.device)) { // If we don't have permission, keep asking for it
+        if (!manager.hasPermission(driver.device)) { // If we don't have permission, keep asking for it
             val usbPermissionIntent =
                 PendingIntent.getBroadcast(context.applicationContext, 0, Intent(INTENT_ACTION_GRANT_USB), 0)
             manager.requestPermission(driver.device, usbPermissionIntent)
-            Thread.sleep(100) // Avoid burning CPU
         }
 
         val connection: UsbDeviceConnection = manager.openDevice(driver.device)
         if (driver.ports.size != 1) {
             throw RuntimeException("USB device ports = ${driver.ports.size}, expected 1. Contact Anna")
         }
+
+        Toast.makeText(context, "Initializing device..., please wait", Toast.LENGTH_SHORT)
+            .show()
+
         port = driver.ports[0]
         port.open(connection)
         port.setParameters(115200, 8, UsbSerialPort.STOPBITS_1, UsbSerialPort.PARITY_NONE)

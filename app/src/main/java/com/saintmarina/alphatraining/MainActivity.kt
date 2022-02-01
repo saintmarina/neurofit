@@ -52,6 +52,7 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
+import java.lang.RuntimeException
 import java.util.concurrent.TimeUnit
 
 private const val REQUEST = 112
@@ -63,19 +64,17 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        checkPermissions()
+
 
         val containerLayout = findViewById<LinearLayout>(R.id.vizContainerLayout)
         val radioGroup = findViewById<RadioGroup>(R.id.radioWaves)
 
-        /***BUTTONS***/
         val buttonStartStop = findViewById<ToggleButton>(R.id.start_stop_toggle_button)
             .apply { setBackgroundColor(Color.GREEN) }
         val buttonStartStopRecording = findViewById<ToggleButton>(R.id.start_stop_recording)
 
         val buttonReplay = findViewById<ToggleButton>(R.id.replay)
         val buttonRealTime = findViewById<ToggleButton>(R.id.real_time)
-        /***/
 
         val seekBar = findViewById<SeekBar>(R.id.seekBar)
         val buttonAutoScale = findViewById<ToggleButton>(R.id.button_autoscale)
@@ -107,8 +106,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         buttonStartStopRecording.setOnCheckedChangeListener { _, isChecked ->
-            isRecording = isChecked
-
+            if (isChecked) checkPermissionsForRecording()
         }
 
         buttonAutoScale.setOnCheckedChangeListener { _, isChecked ->
@@ -135,7 +133,6 @@ class MainActivity : AppCompatActivity() {
                 1f
             )
         })
-
 
         fun maybeWriteBrainData(packet: OpenBCI.Packet) {
             when {
@@ -172,29 +169,36 @@ class MainActivity : AppCompatActivity() {
             updateMusicVolume()
         }
 
-
         val subscribePacketProcessor = run {
             var packetStream: Disposable? = null
 
             { enable: Boolean, src: () -> Observable<OpenBCI.Packet> ->
                 packetStream?.dispose()
                 packetStream = if (enable) {
-                    src().subscribeOn(Schedulers.newThread())
-                        .subscribe { packet -> processPacket(packet) }
+                    try {
+                        src().subscribeOn(Schedulers.newThread())
+                            .subscribe { packet -> processPacket(packet) }
+                    } catch (e: RuntimeException) {
+                        Toast.makeText(this, e.message, Toast.LENGTH_SHORT)
+                            .show()
+                        null
+                    }
                 } else {
                     null
+
                 }
+                packetStream != null
             }
         }
 
-        buttonRealTime.setOnCheckedChangeListener { _, isChecked ->
-            subscribePacketProcessor(isChecked) {
+        buttonRealTime.setOnCheckedChangeListener { b, isChecked ->
+            b.isChecked = subscribePacketProcessor(isChecked) {
                 OpenBCI(this).createPacketStreamObservable()
             }
         }
 
-        buttonReplay.setOnCheckedChangeListener { _, isChecked ->
-            subscribePacketProcessor(isChecked) {
+        buttonReplay.setOnCheckedChangeListener { b, isChecked ->
+            b.isChecked = subscribePacketProcessor(isChecked) {
                 BrainFile().Reader().createPacketStreamObservable()
             }
         }
@@ -207,12 +211,13 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
-    private fun checkPermissions() {
+    private fun checkPermissionsForRecording() {
          if (Build.VERSION.SDK_INT >= 23) {
            val permissions = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE)
-           while (!hasPermissions(permissions)) { // If we don't have permission, keep asking for it
+           if (!hasPermissions(permissions)) {
                ActivityCompat.requestPermissions((this as Activity), permissions, REQUEST)
-               Thread.sleep(100) // Avoid burning CPU
+           } else {
+               isRecording = true
            }
        }
     }
@@ -221,11 +226,31 @@ class MainActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             for (permission in permissions) {
                 if (ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+
                     return false
                 }
             }
         }
         return true
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            REQUEST -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    isRecording = true
+                } else {
+                    Toast.makeText(this, "The application can't operate without requested permissions. Grant all requested permissions to proceed.", Toast.LENGTH_SHORT)
+                        .show()
+                    checkPermissionsForRecording()
+                }
+            }
+        }
     }
 }
 
