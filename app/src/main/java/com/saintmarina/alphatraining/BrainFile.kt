@@ -31,7 +31,6 @@ class BrainFile {
         }
     }
 
-
     inner class Reader {
         private val inputStream = FileInputStream(getLastRecordedFile())
 

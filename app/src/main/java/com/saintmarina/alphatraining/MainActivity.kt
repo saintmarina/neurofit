@@ -44,6 +44,7 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -51,8 +52,12 @@ import androidx.core.app.ActivityCompat
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.exceptions.UndeliverableException
+import io.reactivex.rxjava3.plugins.RxJavaPlugins
 import io.reactivex.rxjava3.schedulers.Schedulers
+import java.io.IOException
 import java.lang.RuntimeException
+import java.net.SocketException
 import java.util.concurrent.TimeUnit
 
 private const val REQUEST = 112
@@ -64,6 +69,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        initRxErrorHandler()
 
 
         val containerLayout = findViewById<LinearLayout>(R.id.vizContainerLayout)
@@ -252,6 +258,12 @@ class MainActivity : AppCompatActivity() {
                     checkPermissionsForRecording()
                 }
             }
+        }
+    }
+
+    private fun initRxErrorHandler() {
+        RxJavaPlugins.setErrorHandler { throwable ->
+            throwable.message?.let { Log.e("Undeliverable exception", it) }
         }
     }
 }
