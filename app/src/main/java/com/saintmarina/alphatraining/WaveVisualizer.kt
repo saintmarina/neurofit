@@ -2,10 +2,8 @@ package com.saintmarina.alphatraining
 
 import android.content.Context
 import android.graphics.*
-import android.util.Log
 import android.view.View
 import androidx.core.graphics.withMatrix
-import java.util.*
 
 class WaveVisualizer(context: Context) : View(context) {
     var values: DoubleCircularArray = DoubleCircularArray(NUM_POINTS_ON_SCREEN)

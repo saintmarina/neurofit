@@ -195,12 +195,14 @@ class MainActivity : AppCompatActivity() {
             b.isChecked = subscribePacketProcessor(isChecked) {
                 OpenBCI(this).createPacketStreamObservable()
             }
+            buttonReplay.isEnabled = !b.isChecked
         }
 
         buttonReplay.setOnCheckedChangeListener { b, isChecked ->
             b.isChecked = subscribePacketProcessor(isChecked) {
                 BrainFile().Reader().createPacketStreamObservable()
             }
+            buttonRealTime.isEnabled = !b.isChecked
         }
 
         Observable.interval(100, TimeUnit.MILLISECONDS)

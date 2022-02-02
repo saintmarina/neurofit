@@ -16,6 +16,7 @@ class GridOfSeconds(context: Context) : View(context) {
         style = Paint.Style.FILL
         isAntiAlias = true
     }
+
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
         canvas!!.apply {

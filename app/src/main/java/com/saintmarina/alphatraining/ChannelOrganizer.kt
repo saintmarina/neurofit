@@ -1,11 +1,8 @@
 package com.saintmarina.alphatraining
 
 import android.content.Context
-import android.graphics.Path
 import kotlin.math.abs
 import kotlin.math.max
-
-
 
 const val NUM_SECS_ON_SCREEN = 10
 const val SCREEN_DECIMATION_RATE = 3

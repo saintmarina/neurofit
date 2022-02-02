@@ -3,7 +3,6 @@ package com.saintmarina.alphatraining
 import android.content.Context
 import android.media.MediaPlayer
 
-
 class Audio(var context: Context) {
     var player:MediaPlayer? = null
 
@@ -21,7 +20,6 @@ class Audio(var context: Context) {
 
     fun setVolume(volume_: Float){
         var volume = volume_
-
         if (volume < 0.01f) {
             volume = 0.01f
         }

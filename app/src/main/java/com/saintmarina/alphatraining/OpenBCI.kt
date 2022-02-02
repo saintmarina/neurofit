@@ -61,6 +61,8 @@ class OpenBCI(context: Context){
         val manager: UsbManager = context.applicationContext.getSystemService(Context.USB_SERVICE) as UsbManager
         val availableDrivers: List<UsbSerialDriver> = UsbSerialProber.getDefaultProber().findAllDrivers(manager)
         if (availableDrivers.isEmpty()) {
+            Toast.makeText(context, "OpenBCI device was not found", Toast.LENGTH_SHORT)
+                .show()
             throw RuntimeException("OpenBCI device was not found")
         }
 
@@ -77,7 +79,7 @@ class OpenBCI(context: Context){
             throw RuntimeException("USB device ports = ${driver.ports.size}, expected 1. Contact Anna")
         }
 
-        Toast.makeText(context, "Initializing device..., please wait", Toast.LENGTH_SHORT)
+        Toast.makeText(context, "Initializing device... please wait", Toast.LENGTH_SHORT)
             .show()
 
         port = driver.ports[0]

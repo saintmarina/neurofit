@@ -13,7 +13,7 @@ import java.util.*
 
 private const val FILE_NAME_FMT: String = "yyyy-MM-d HH.mm.ss"
 
-class BrainFile() {
+class BrainFile {
     private var byteBuffer: ByteBuffer = ByteBuffer.allocate(36)
     inner class Writer {
         private var outputStream: FileOutputStream = FileOutputStream(File(commonDocumentDirPath(), getBaseName()))
@@ -87,7 +87,7 @@ class BrainFile() {
 
         fun getLastRecordedFile(): File {
             val dir: File = commonDocumentDirPath()
-            val listOfFiles = dir.listFiles().sortedBy { it.name }
+            val listOfFiles = dir.listFiles()?.sortedBy { it.name }
             return listOfFiles!!.last()
         }
     }
