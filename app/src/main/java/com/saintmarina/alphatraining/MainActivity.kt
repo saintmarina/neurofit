@@ -166,6 +166,7 @@ class MainActivity : AppCompatActivity() {
         fun processPacket(packet: OpenBCI.Packet) {
             maybeWriteBrainData(packet)
             channels.pushValueInEachChannel(packet)
+            //channels.updateAllVizualizers()
             updateMusicVolume()
         }
 
@@ -208,11 +209,12 @@ class MainActivity : AppCompatActivity() {
 
 
 
-        Observable.interval(100, TimeUnit.MILLISECONDS)
+        Observable.interval(50, TimeUnit.MILLISECONDS)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 textMax.text = "limit = ${channels.limit.toInt()} µV"
                 textVolume.text = "volume = ${(volume * 100).toInt()}%"
+                channels.updateAllVizualizers()
             }
     }
 

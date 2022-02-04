@@ -48,4 +48,8 @@ class Channels(val channels: Array<ChannelOrganizer>) {
         }
         //file.write(bytearray)
     }
+
+    fun updateAllVizualizers() {
+        channels.forEach { c -> c.updateVisualizer() }
+    }
 }

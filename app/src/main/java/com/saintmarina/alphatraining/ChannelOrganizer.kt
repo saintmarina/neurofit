@@ -39,7 +39,7 @@ data class ChannelOrganizer(val context: Context) {
             vizDataAlpha.push(alphaV)
             vizDataAlphaEnvelope.push(alphaEnvelopeV)
 
-            updateVisualizer()
+            //updateVisualizer()
         }
     }
 
@@ -56,7 +56,7 @@ data class ChannelOrganizer(val context: Context) {
         updateVisualizer()
     }
 
-    private fun updateVisualizer() {
+    fun updateVisualizer() {
         maxPoint = max(visualizer.values.array.maxOrNull() ?: 1.00,
             abs(visualizer.values.array.minOrNull()?: 1.00) ).toFloat()
         minPoint = if (visualizer.values == vizDataAlphaEnvelope) 0.0f else -maxPoint
