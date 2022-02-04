@@ -9,14 +9,14 @@ const val SCREEN_DECIMATION_RATE = 3
 const val SCREEN_REFRESH_RATE = OpenBCI.SAMPLE_RATE_HZ / SCREEN_DECIMATION_RATE
 const val NUM_POINTS_ON_SCREEN = NUM_SECS_ON_SCREEN*SCREEN_REFRESH_RATE
 
-data class ChannelOrganizer(val context: Context) {
+data class ChannelOrganizer(val context: Context, val visPaintColor: Int) {
     private var counter = 0
 
     private val vizDataAll = DoubleCircularArray(NUM_POINTS_ON_SCREEN)
     private val vizDataAlpha = DoubleCircularArray(NUM_POINTS_ON_SCREEN)
     private val vizDataAlphaEnvelope = DoubleCircularArray(NUM_POINTS_ON_SCREEN)
 
-    val visualizer = WaveVisualizer(context).apply { values = vizDataAll }
+    val visualizer = WaveVisualizer(context, visPaintColor).apply { values = vizDataAll }
     var maxPoint = 1.0f
     var minPoint = 0.0f
 

@@ -39,12 +39,14 @@ package com.saintmarina.alphatraining
 
 
 import android.annotation.SuppressLint
+import android.app.ActionBar
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.transition.Slide
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
@@ -53,18 +55,20 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import java.io.File
 import java.lang.RuntimeException
 import java.util.concurrent.TimeUnit
+import kotlin.math.pow
 
 private const val REQUEST = 112
 @SuppressLint("SetTextI18n")
 class MainActivity : AppCompatActivity() {
     private var isRecording = false
     private var volume: Float = 0.0f
+    private var alphaAmplitude: Float = 0.0f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         initRxErrorHandler()
-
+        val vizLayout = findViewById<LinearLayout>(R.id.visualizerFullLayout)
         val containerLayout = findViewById<LinearLayout>(R.id.vizContainerLayout)
         val radioGroup = findViewById<RadioGroup>(R.id.radioWaves)
 
@@ -75,14 +79,15 @@ class MainActivity : AppCompatActivity() {
         val buttonReplay = findViewById<ToggleButton>(R.id.replay)
         val buttonRealTime = findViewById<ToggleButton>(R.id.real_time)
 
-        val seekBar = findViewById<SeekBar>(R.id.seekBar)
+        val seekBar = findViewById<SeekBar>(R.id.seekBar).apply { progress = 300 }
         val buttonAutoScale = findViewById<ToggleButton>(R.id.button_autoscale)
 
         val textMax = findViewById<TextView>(R.id.textMax)
         val textVolume = findViewById<TextView>(R.id.textVolume)
 
         val player = Audio(this)
-        val channels = Channels(Array(8) { ChannelOrganizer(this) })
+        val visColorArray = arrayOf(Color.parseColor("#C20000"), Color.parseColor("#E6701C"), Color.parseColor("#BC9700"), Color.parseColor("#038A0C"), Color.BLUE, Color.parseColor("#800080"), Color.BLACK, Color.GRAY,)
+        val channels = Channels(Array(8) { i -> ChannelOrganizer(this, visColorArray[i]) })
         radioGroup.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
                 R.id.radioAllWaves -> channels.channels.forEach { c -> c.showAllWaves() }
@@ -125,6 +130,19 @@ class MainActivity : AppCompatActivity() {
             )
         }
 
+        val a = arrayOf("O1", "O2", "P3", "P4", "C3", "C4", "Fp1", "Fp2")
+        a.forEach { s -> vizLayout.addView(
+            TextView(this).apply {
+                layoutParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, 0, 4f)
+                text = s
+                gravity = 0x11
+                setTextColor(Color.LTGRAY)
+            })
+        }
+        vizLayout.addView(TextView(this).apply { layoutParams = LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f) })
+
         containerLayout.addView(GridOfSeconds(this).apply {
             layoutParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -157,8 +175,10 @@ class MainActivity : AppCompatActivity() {
             if (buttonAutoScale.isChecked)
                 channels.autoscale()
             else
-                channels.setScale(seekBar.progress, isEnv)
-            volume = channels.computeVolume(channels.limit)
+                channels.setScale(25*(seekBar.progress/seekBar.max.toFloat()).pow(1.5f), isEnv)
+
+            alphaAmplitude = channels.computeAlphaWaveAmplitude()
+            volume =  alphaAmplitude.toFloat()/(channels.limit+0.00001F) // Here adding 1 so we never divide by 0
             if (buttonStartStop.isChecked)
                 player.setVolume(volume)
         }
@@ -166,7 +186,7 @@ class MainActivity : AppCompatActivity() {
         fun processPacket(packet: OpenBCI.Packet) {
             maybeWriteBrainData(packet)
             channels.pushValueInEachChannel(packet)
-            //channels.updateAllVizualizers()
+            channels.updateAllVizualizers()
             updateMusicVolume()
         }
 
@@ -209,13 +229,14 @@ class MainActivity : AppCompatActivity() {
 
 
 
-        Observable.interval(50, TimeUnit.MILLISECONDS)
+        Observable.interval(100, TimeUnit.MILLISECONDS)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                textMax.text = "limit = ${channels.limit.toInt()} µV"
+                textMax.text = "AlphaWave = %.2f µV, limit = %.2f µV".format(alphaAmplitude, channels.limit)
                 textVolume.text = "volume = ${(volume * 100).toInt()}%"
                 channels.updateAllVizualizers()
             }
+        updateMusicVolume()
     }
 
     /* This catches the Undeliverable exception generated by RX Java,

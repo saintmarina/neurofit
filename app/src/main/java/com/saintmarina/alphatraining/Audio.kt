@@ -2,12 +2,13 @@ package com.saintmarina.alphatraining
 
 import android.content.Context
 import android.media.MediaPlayer
+import kotlin.math.pow
 
 class Audio(var context: Context) {
     var player:MediaPlayer? = null
 
     fun play() {
-        player = MediaPlayer.create(context, R.raw.mixed_binaural_beat_10m)
+        player = MediaPlayer.create(context, R.raw.pure_binaural_beat)
         player!!.isLooping = true
         player!!.start()
     }
@@ -20,9 +21,14 @@ class Audio(var context: Context) {
 
     fun setVolume(volume_: Float){
         var volume = volume_
+        val baseline = 0.15f;
+        volume -= baseline
         if (volume < 0.01f) {
             volume = 0.01f
         }
+        volume *= 1/(1-baseline)
+        volume = 2*volume.pow(2)
+
         player?.setVolume(volume, volume)
     }
 }

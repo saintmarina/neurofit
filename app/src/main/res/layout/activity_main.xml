@@ -48,8 +48,8 @@
             android:layout_width="100dp"
             android:layout_height="75dp"
             android:layout_gravity="center"
-            android:textOff="START"
-            android:textOn="STOP"/>
+            android:textOff="Start Audio Feedback"
+            android:textOn="Stop Audio Feedback"/>
 
     </LinearLayout>
 
@@ -81,7 +81,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="20dp"
             android:max="1000"
-            android:min="1"/>
+            android:min="100"/>
         <ToggleButton
             android:id="@+id/button_autoscale"
             android:layout_width="wrap_content"
@@ -116,12 +116,25 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:textSize="30dp"
-            android:text="EnvWaves" />
+            android:text="AlphaAmplitude" />
     </RadioGroup>
     <LinearLayout
-        android:id="@+id/vizContainerLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"/>
+        android:orientation="horizontal"
+        android:background="@drawable/customborder"
+        >
+        <LinearLayout
+            android:id="@+id/visualizerFullLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"/>
+        <LinearLayout
+            android:id="@+id/vizContainerLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" />
+    </LinearLayout>
 
 </LinearLayout>

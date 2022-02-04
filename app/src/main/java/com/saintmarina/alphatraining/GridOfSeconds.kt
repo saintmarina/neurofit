@@ -21,9 +21,11 @@ class GridOfSeconds(context: Context) : View(context) {
         super.onDraw(canvas)
         canvas!!.apply {
             for ((i, text) in textArray.withIndex()) {
-                if (i == 0)
-                    continue
-                drawText(text, i*width/NUM_SECS_ON_SCREEN - fontSize/3, fontSize, paint)
+                val offset = if (i == 0)
+                    fontSize
+                else
+                    0F
+                drawText(text, i*width/NUM_SECS_ON_SCREEN + (offset-fontSize)/3, fontSize, paint)
             }
         }
     }

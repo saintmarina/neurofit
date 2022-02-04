@@ -23,8 +23,8 @@ class Channels(val channels: Array<ChannelOrganizer>) {
         limit = yMax
     }
 
-    fun setScale(sensitivity: Int, envelopeWave: Boolean) {
-        val yMax = 1000*(sensitivity.toFloat()/1000).pow(3F)
+    fun setScale(sensitivity: Float, envelopeWave: Boolean) {
+        val yMax = sensitivity
         channels.forEach { c ->
             c.visualizer.yMax = yMax
             c.visualizer.yMin = if (envelopeWave) 0F else -yMax
@@ -32,13 +32,9 @@ class Channels(val channels: Array<ChannelOrganizer>) {
         limit = yMax
     }
 
-    fun computeVolume(limit: Float): Float {
-        var envelopeAverage = 0.00
-        for (i in 0 until CHANNELS) {
-            envelopeAverage += channels[i].alphaEnvelopeV
-        }
-        envelopeAverage /= CHANNELS
-        return envelopeAverage.toFloat()/(limit+1F) // Here adding 1 so we never divide by 0
+    fun computeAlphaWaveAmplitude(): Float {
+        val amplitude = channels.map { c -> c.alphaEnvelopeV }.maxOrNull()
+        return amplitude!!.toFloat()
     }
 
     fun pushValueInEachChannel(packet: OpenBCI.Packet) {

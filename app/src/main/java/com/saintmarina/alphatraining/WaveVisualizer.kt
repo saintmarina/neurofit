@@ -5,7 +5,7 @@ import android.graphics.*
 import android.view.View
 import androidx.core.graphics.withMatrix
 
-class WaveVisualizer(context: Context) : View(context) {
+class WaveVisualizer(context: Context, paintColor: Int) : View(context) {
     var values: DoubleCircularArray = DoubleCircularArray(NUM_POINTS_ON_SCREEN)
         set(value) {
             field = value
@@ -17,7 +17,7 @@ class WaveVisualizer(context: Context) : View(context) {
 
     private val m = Matrix()
     private val paint = Paint().apply {
-        color = Color.BLACK
+        color = paintColor
         strokeWidth = 0F
         style = Paint.Style.STROKE
         isAntiAlias = true
