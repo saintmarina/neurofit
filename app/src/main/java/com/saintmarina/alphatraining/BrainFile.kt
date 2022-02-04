@@ -1,6 +1,8 @@
 package com.saintmarina.alphatraining
 
+import android.content.Context
 import android.os.Environment
+import android.util.Log
 import io.reactivex.rxjava3.core.Observable
 import java.io.File
 import java.io.FileInputStream
@@ -10,13 +12,12 @@ import java.nio.ByteBuffer
 import java.text.SimpleDateFormat
 import java.util.*
 
-
 private const val FILE_NAME_FMT: String = "yyyy-MM-d HH.mm.ss"
 
 class BrainFile {
     private var byteBuffer: ByteBuffer = ByteBuffer.allocate(36)
-    inner class Writer {
-        private var outputStream: FileOutputStream = FileOutputStream(File(commonDocumentDirPath(), getBaseName()))
+    inner class Writer(path: File) {
+        private var outputStream: FileOutputStream = FileOutputStream(path)
 
         fun writePacket(packet: OpenBCI.Packet) {
             byteBuffer.position(0)
@@ -31,8 +32,8 @@ class BrainFile {
         }
     }
 
-    inner class Reader {
-        private val inputStream = FileInputStream(getLastRecordedFile())
+    inner class Reader(path: File) {
+        private val inputStream = FileInputStream(path)
 
         private fun readPacket(): OpenBCI.Packet? {
             byteBuffer.position(0)
@@ -40,7 +41,6 @@ class BrainFile {
                 return null
             byteBuffer.position(0)
             return OpenBCI.Packet.fromByteBuf(byteBuffer)
-
         }
 
         fun createPacketStreamObservable(): Observable<OpenBCI.Packet> {
@@ -64,29 +64,31 @@ class BrainFile {
 
     }
     companion object {
-        fun commonDocumentDirPath(): File {
-            /* val dir = File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)?.absolutePath + File.separator +"AlphaTraining")
+        fun commonDocumentDirPath(context: Context): File {
+             val dir = File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)?.absolutePath + File.separator +"AlphaTraining")
              Log.i("FileRecorder", "dir is: $dir")
              Log.i("FileRecorder", "succeeded to create a dir: ${dir.mkdir()}")
-             return dir*/
+             return dir
 
+            /*
             val dir = File(
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS),
                 "AlphaTraining"
             )
             dir.mkdirs()
-            return dir
+            return dir*/
         }
 
-        private fun getBaseName(): String {
+         fun getDefaultFileName(): String {
             val locale: Locale = Locale.getDefault()
             val formatter = SimpleDateFormat(FILE_NAME_FMT, locale)
             return formatter.format(Calendar.getInstance().time)
         }
 
-        fun getLastRecordedFile(): File {
-            val dir: File = commonDocumentDirPath()
+         fun getLastRecordedFile(context: Context): File {
+            val dir: File = commonDocumentDirPath(context)
             val listOfFiles = dir.listFiles()?.sortedBy { it.name }
+            Log.i("X", "Listing files in ${dir}: ${listOfFiles}")
             return listOfFiles!!.last()
         }
     }
