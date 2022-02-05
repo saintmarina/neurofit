@@ -44,6 +44,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.transition.Slide
@@ -67,6 +68,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN)
         initRxErrorHandler()
         val vizLayout = findViewById<LinearLayout>(R.id.visualizerFullLayout)
         val containerLayout = findViewById<LinearLayout>(R.id.vizContainerLayout)

@@ -7,35 +7,56 @@
     android:id="@+id/linear_layout"
     android:orientation="vertical"
     android:gravity="center_horizontal"
+    android:background="@drawable/ui_background"
     tools:context=".MainActivity">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="NeuroFit"
+        android:fontFamily="cursive"
+        android:textSize="100dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Alpha waves trainer and EEG brain data visualizer"
+        android:textSize="20dp"
+        android:typeface="sans"
+        android:fontFamily="cursive"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity=""
         android:orientation="horizontal">
+
         <ToggleButton
             android:id="@+id/real_time"
-            android:layout_width="wrap_content"
+            android:layout_width="228dp"
             android:layout_height="50dp"
             android:layout_gravity="center"
             android:layout_marginHorizontal="30dp"
-            android:textOff="REAL-TIME"
-            android:textOn="STOP REAL-TIME"/>
+            android:background="@drawable/button_selector"
+            android:textAllCaps="false"
+            android:textOff="Start real time data stream"
+            android:textOn="Stop data stream" />
+
         <ToggleButton
             android:id="@+id/start_stop_recording"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:layout_gravity="center"
             android:textOff="RECORD SESSION"
-            android:textOn="STOP RECORDING"/>
+            android:textOn="STOP RECORDING"
+            android:textAllCaps="false"/>
         <ToggleButton
             android:id="@+id/replay"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:layout_gravity="center"
             android:layout_marginHorizontal="30dp"
+            android:background="@drawable/button_selector"
             android:textOff="REPLAY"
-            android:textOn="STOP REPLAYING"/>
+            android:textOn="STOP REPLAYING"
+            android:textAllCaps="false"/>
     </LinearLayout>
 
     <LinearLayout
@@ -122,8 +143,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:background="@drawable/customborder"
-        >
+        android:background="@drawable/viz_border">
         <LinearLayout
             android:id="@+id/visualizerFullLayout"
             android:layout_width="wrap_content"
