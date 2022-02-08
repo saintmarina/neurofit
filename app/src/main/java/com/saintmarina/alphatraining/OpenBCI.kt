@@ -68,7 +68,7 @@ class OpenBCI(context: Context){
 
         val driver: UsbSerialDriver = availableDrivers[0]
         // Check Permissions
-        if (!manager.hasPermission(driver.device)) { // If we don't have permission, keep asking for it
+        if (!manager.hasPermission(driver.device)) {
             val usbPermissionIntent =
                 PendingIntent.getBroadcast(context.applicationContext, 0, Intent(INTENT_ACTION_GRANT_USB), 0)
             manager.requestPermission(driver.device, usbPermissionIntent)

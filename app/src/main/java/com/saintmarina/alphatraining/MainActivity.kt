@@ -101,7 +101,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         var brainFileWriter: BrainFile.Writer? = null
-
         buttonStartStop.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 buttonStartStop.setBackgroundColor(Color.RED)
