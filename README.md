@@ -25,5 +25,5 @@ NeuroFit serves as a data visualizer and as Alpha waves trainer. To start a trai
 
 ## For Delelopers: How it works?
 
-![NeuroFit Data Flow Graph](/data_flow.png)
+![NeuroFit Data Flow Graph](data_flow.png)
 
