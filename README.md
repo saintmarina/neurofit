@@ -35,7 +35,7 @@ NeuroFit serves as a data visualizer and as an Alpha waves trainer. To start a t
 ![NeuroFit Data Flow Graph](assets/data_flow.png)
 The graph above describes the data flow of the application.
 <ul>
-  <li>**OpenBCI driver** was created from scratch based on the [OpenBCI SDK](https://docs.openbci.com/Cyton/CytonSDK/).</li>
-  <li>**Brainwave filter** component implements Infinite Impulse Response filter with a second order filter to filter Alpha waves. Due to lack of libraries for signal processing on Andorid, I have implemented IIR and a second order filter in Kotlin from scratch.</li>
-  <li>**Visualizer** in a custom View component that uses Android Canvas API to display Brain Waves at 60 spf rate</li>
+  <li><strong>OpenBCI driver</strong> was created from scratch based on the [OpenBCI SDK](https://docs.openbci.com/Cyton/CytonSDK/).</li>
+  <li><strong>Brainwave filter</strong> component implements Infinite Impulse Response filter with a second order filter to filter Alpha waves. Due to lack of libraries for signal processing on Andorid, I have implemented IIR and a second order filter in Kotlin from scratch.</li>
+  <li><strong>Visualizer</strong> in a custom View component that uses Android Canvas API to display Brain Waves at 60 spf rate</li>
 </ul> 
