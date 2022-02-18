@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity() {
         val radioGroup = findViewById<RadioGroup>(R.id.radioWaves)
 
         val buttonStartStop = findViewById<ToggleButton>(R.id.start_stop_toggle_button)
-            .apply { setBackgroundColor(Color.GREEN) }
+           // .apply { setBackgroundColor(Color.GREEN) }
         val buttonStartStopRecording = findViewById<ToggleButton>(R.id.start_stop_recording)
 
         val buttonReplay = findViewById<ToggleButton>(R.id.replay)
@@ -103,11 +103,11 @@ class MainActivity : AppCompatActivity() {
         var brainFileWriter: BrainFile.Writer? = null
         buttonStartStop.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
-                buttonStartStop.setBackgroundColor(Color.RED)
+                //buttonStartStop.setBackgroundColor(Color.RED)
                 player.play()
 
             } else {
-                buttonStartStop.setBackgroundColor(Color.GREEN)
+                //buttonStartStop.setBackgroundColor(Color.GREEN)
                 player.stop()
             }
         }
@@ -230,12 +230,10 @@ class MainActivity : AppCompatActivity() {
             buttonRealTime.isEnabled = !b.isChecked
         }
 
-
-
         Observable.interval(100, TimeUnit.MILLISECONDS)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                textMax.text = "AlphaWave = %.2f µV, limit = %.2f µV".format(alphaAmplitude, channels.limit)
+                textMax.text = "AlphaWave = %.2f µV\n limit = %.2f µV".format(alphaAmplitude, channels.limit)
                 textVolume.text = "volume = ${(volume * 100).toInt()}%"
                 channels.updateAllVizualizers()
             }

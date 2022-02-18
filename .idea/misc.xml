@@ -4,11 +4,13 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="app/src/main/res/drawable/botton_shape_pressed.xml" value="0.1375" />
+        <entry key="app/src/main/res/drawable/box_border.xml" value="0.1395" />
         <entry key="app/src/main/res/drawable/button_selector.xml" value="0.1375" />
+        <entry key="app/src/main/res/drawable/button_shape_pressed.xml" value="0.1395" />
         <entry key="app/src/main/res/drawable/button_shape_released.xml" value="0.1375" />
         <entry key="app/src/main/res/drawable/ui_background.xml" value="0.141" />
         <entry key="app/src/main/res/drawable/viz_border.xml" value="0.141" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.7593360995850622" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.335" />
       </map>
     </option>
   </component>

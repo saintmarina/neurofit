@@ -9,139 +9,168 @@
     android:gravity="center_horizontal"
     android:background="@drawable/ui_background"
     tools:context=".MainActivity">
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="NeuroFit"
-        android:fontFamily="cursive"
-        android:textSize="100dp"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Alpha waves trainer and EEG brain data visualizer"
-        android:textSize="20dp"
-        android:typeface="sans"
-        android:fontFamily="cursive"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity=""
-        android:orientation="horizontal">
-
-        <ToggleButton
-            android:id="@+id/real_time"
-            android:layout_width="228dp"
-            android:layout_height="50dp"
-            android:layout_gravity="center"
-            android:layout_marginHorizontal="30dp"
-            android:background="@drawable/button_selector"
-            android:textAllCaps="false"
-            android:textOff="Start real time data stream"
-            android:textOn="Stop data stream" />
-
-        <ToggleButton
-            android:id="@+id/start_stop_recording"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+        <TextView
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:layout_gravity="center"
-            android:textOff="RECORD SESSION"
-            android:textOn="STOP RECORDING"
-            android:textAllCaps="false"/>
-        <ToggleButton
-            android:id="@+id/replay"
+            android:layout_height="wrap_content"
+            android:text="NeuroFit"
+            android:fontFamily="cursive"
+            android:textSize="90dp"/>
+        <TextView
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:layout_gravity="center"
-            android:layout_marginHorizontal="30dp"
-            android:background="@drawable/button_selector"
-            android:textOff="REPLAY"
-            android:textOn="STOP REPLAYING"
-            android:textAllCaps="false"/>
+            android:layout_height="wrap_content"
+            android:text="Alpha waves trainer and EEG brain data visualizer"
+            android:textSize="20dp"
+            android:typeface="sans"
+            android:fontFamily="cursive"/>
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/buttons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/box_border">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="15dp"
+            android:weightSum="3"
+            android:orientation="horizontal">
+            <ToggleButton
+                android:id="@+id/real_time"
+                android:layout_width="150dp"
+                android:layout_height="50dp"
+                android:layout_marginHorizontal="30dp"
+                android:background="@drawable/button_selector"
+                android:textAllCaps="false"
+                android:textOff="Real time stream"
+                android:textOn="Stop data stream"
+                android:layout_weight="2"/>
+            <ToggleButton
+                android:id="@+id/start_stop_recording"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:background="@drawable/button_selector"
+                android:textAllCaps="false"
+                android:textOff="REC 🔴"
+                android:textOn="REC 🔴"
+                android:layout_weight="1"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="15dp"
+            android:orientation="horizontal"
+            android:weightSum="3">
+            <ToggleButton
+                android:id="@+id/replay"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="30dp"
+                android:background="@drawable/button_selector"
+                android:textOff="Replay"
+                android:textOn="Stop"
+                android:textAllCaps="false"
+                android:layout_weight="1"/>
+            <ToggleButton
+                android:id="@+id/start_stop_toggle_button"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:background="@drawable/button_selector"
+                android:layout_gravity="center"
+                android:textOff="Start Audio Feedback"
+                android:textOn="Stop Audio Feedback"
+                android:layout_weight="2"/>
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:gravity="center"
-        android:orientation="horizontal">
-        <ToggleButton
-            android:id="@+id/start_stop_toggle_button"
-            android:layout_width="100dp"
-            android:layout_height="75dp"
-            android:layout_gravity="center"
-            android:textOff="Start Audio Feedback"
-            android:textOn="Stop Audio Feedback"/>
+        android:weightSum="4">
+        <RadioGroup
+            android:id="@+id/radioWaves"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkedButton="@id/radioAllWaves"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:background="@drawable/box_border">
+            <RadioButton
+                android:id="@+id/radioAllWaves"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="AllWaves" />
+            <RadioButton
+                android:id="@+id/radioAlphaWaves"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="AlphaWaves" />
+            <RadioButton
+                android:id="@+id/radioEnvWaves"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="AlphaAmplitude" />
+        </RadioGroup>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
 
-    </LinearLayout>
+            android:layout_weight="3"
+            android:background="@drawable/box_border">
+            <TextView
+                android:id="@+id/textMax"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="yMax"/>
+            <TextView
+                android:id="@+id/textVolume"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Volume"/>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:weightSum="10">
+                <SeekBar
+                    android:id="@+id/seekBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:max="1000"
+                    android:min="100"
+                    android:layout_weight="9"
+                    />
+                <ToggleButton
+                    android:id="@+id/button_autoscale"
+                    android:background="@drawable/button_selector"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+            </LinearLayout>
+        </LinearLayout>
 
-    <TextView
-        android:id="@+id/textMax"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textSize="30dp"
-        android:text="yMax"/>
-    <TextView
-        android:id="@+id/textVolume"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-
-        android:textSize="30dp"
-        android:text="Volume"/>
-
+        </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
-        <SeekBar
-            android:id="@+id/seekBar"
-            android:layout_width="350dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
-            android:max="1000"
-            android:min="100"/>
-        <ToggleButton
-            android:id="@+id/button_autoscale"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-    </LinearLayout>
-    <RadioGroup
-        android:id="@+id/radioWaves"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:checkedButton="@id/radioAllWaves"
-
-        android:orientation="horizontal">
-        <RadioButton
-            android:id="@+id/radioAllWaves"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="30dp"
-            android:layout_margin="10dp"
-            android:text="AllWaves" />
-
-        <RadioButton
-            android:id="@+id/radioAlphaWaves"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:textSize="30dp"
-            android:text="AlphaWaves" />
-
-        <RadioButton
-            android:id="@+id/radioEnvWaves"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:textSize="30dp"
-            android:text="AlphaAmplitude" />
-    </RadioGroup>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
         android:orientation="horizontal"
         android:background="@drawable/viz_border">
         <LinearLayout
