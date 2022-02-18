@@ -21,7 +21,7 @@ NeuroFit serves as a data visualizer and as an Alpha waves trainer. To start a t
  - C3 - blue
  - C4 - purple
  - Fp1 - gray
- - Fp2 - white 
+ - Fp2 - white </br>
 ![10-20 system](assets/head_points.jpg)
 3. Hit the button "Start Real-time streaming".
 4. During your setup use "All Waves" mode to make sure that all the Open BCI electrodes are well connected.
@@ -33,6 +33,9 @@ NeuroFit serves as a data visualizer and as an Alpha waves trainer. To start a t
 
 ## For Developers: How does it work?
 ![NeuroFit Data Flow Graph](assets/data_flow.png)
-
-
-
+The graph above describes the data flow of the application.
+<ul>
+  <li>**OpenBCI driver** was created from scratch based on the [OpenBCI SDK](https://docs.openbci.com/Cyton/CytonSDK/).</li>
+  <li>**Brainwave filter** component implements Infinite Impulse Response filter with a second order filter to filter Alpha waves. Due to lack of libraries for signal processing on Andorid, I have implemented IIR and a second order filter in Kotlin from scratch.</li>
+  <li>**Visualizer** in a custom View component that uses Android Canvas API to display Brain Waves at 60 spf rate</li>
+</ul> 
