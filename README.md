@@ -11,10 +11,18 @@ NeuroFit is a real-time brain wave visualizer and Alpha wave neurofeedback train
 
 ## How to use it?
 NeuroFit serves as a data visualizer and as an Alpha waves trainer. To start a training session, I recommend following the steps below:
-1. Connect electrodes in the following color order on the Open BCI board. 
-![10-20 points](assets/head_points.jpg)
-2. Connect the Open BCI to your head in the following order. Read more about 10-20 EEG electrode system [here](https://en.wikipedia.org/wiki/10%E2%80%9320_system_(EEG)
-![10-20 system](assets/wire_connection.jpg)
+1. Connect electrodes in the following color order on the Open BCI board: 
+![10-20 points](assets/wire_connection.jpg)
+2. Connect the Open BCI electrodes to your head based on 10-20 EEG electrode system:
+ - O1 - red
+ - O2 - orange
+ - P3 - yellow
+ - P4 - green
+ - C3 - blue
+ - C4 - purple
+ - Fp1 - gray
+ - Fp2 - white 
+![10-20 system](assets/head_points.jpg)
 3. Hit the button "Start Real-time streaming".
 4. During your setup use "All Waves" mode to make sure that all the Open BCI electrodes are well connected.
 5. Use the calibration bar to zoom in or out of the visualization graphs.
