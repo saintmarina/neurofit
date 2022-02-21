@@ -73,6 +73,7 @@ class MainActivity : AppCompatActivity() {
             WindowManager.LayoutParams.FLAG_FULLSCREEN)
 
         initRxErrorHandler()
+        BrainFile.loadDemoBrainDataToDisk(this)
 
         val vizLayout = findViewById<LinearLayout>(R.id.visualizerFullLayout)
         val containerLayout = findViewById<LinearLayout>(R.id.vizContainerLayout)
@@ -225,8 +226,16 @@ class MainActivity : AppCompatActivity() {
         }
 
         buttonReplay.setOnCheckedChangeListener { b, isChecked ->
+            buttonReplay.apply {
+                val numOfFiles = BrainFile.getNumberOfFilesInInternalStorage(this@MainActivity)
+                textOff = if (numOfFiles > 1) {
+                    "Replay"
+                } else {
+                    "Demo"
+                }
+            }
             b.isChecked = subscribePacketProcessor(isChecked) {
-                val file = BrainFile.getLastRecordedFile(this)
+                val file:File = BrainFile.getLastRecordedFile(this)
                 BrainFile().Reader(file).createPacketStreamObservable()
             }
             buttonRealTime.isEnabled = !b.isChecked

@@ -7,7 +7,6 @@ import io.reactivex.rxjava3.core.Observable
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
-import java.lang.Exception
 import java.nio.ByteBuffer
 import java.text.SimpleDateFormat
 import java.util.*
@@ -85,11 +84,33 @@ class BrainFile {
             return formatter.format(Calendar.getInstance().time)
         }
 
+
          fun getLastRecordedFile(context: Context): File {
             val dir: File = commonDocumentDirPath(context)
             val listOfFiles = dir.listFiles()?.sortedBy { it.name }
-            Log.i("X", "Listing files in ${dir}: ${listOfFiles}")
+            Log.i("X", "Listing files in ${dir}: $listOfFiles")
             return listOfFiles!!.last()
         }
+
+        fun getNumberOfFilesInInternalStorage(context: Context): Int {
+            val dir: File = commonDocumentDirPath(context)
+            return dir.listFiles()?.size ?: 0
+        }
+
+        fun loadDemoBrainDataToDisk(context: Context) {
+            val outputStream = FileOutputStream(File(commonDocumentDirPath(context), getDefaultFileName()))
+            val inputStream = context.resources.openRawResource(R.raw.brain_data)
+            val buffer = ByteArray(4*1024)
+
+            var read = inputStream.read(buffer)
+            while (read != -1) {
+                outputStream.write(buffer, 0, read)
+                read = inputStream.read(buffer)
+
+            }
+            outputStream.flush()
+            inputStream.close()
+        }
     }
+
 }

@@ -101,7 +101,7 @@
                 android:layout_gravity="center"
                 android:layout_marginHorizontal="30dp"
                 android:background="@drawable/button_selector"
-                android:textOff="Replay"
+                android:textOff="Demo"
                 android:textOn="Stop"
                 android:textAllCaps="false"
                 android:layout_weight="1"/>
