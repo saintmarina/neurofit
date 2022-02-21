@@ -71,7 +71,9 @@ class MainActivity : AppCompatActivity() {
         window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN)
+
         initRxErrorHandler()
+
         val vizLayout = findViewById<LinearLayout>(R.id.visualizerFullLayout)
         val containerLayout = findViewById<LinearLayout>(R.id.vizContainerLayout)
         val radioGroup = findViewById<RadioGroup>(R.id.radioWaves)
