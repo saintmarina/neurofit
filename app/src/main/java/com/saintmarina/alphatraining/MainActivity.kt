@@ -81,10 +81,9 @@ class MainActivity : AppCompatActivity() {
 
         val buttonStartStop = findViewById<ToggleButton>(R.id.start_stop_toggle_button)
            // .apply { setBackgroundColor(Color.GREEN) }
+        val radioButtonReplay = findViewById<RadioButton>(R.id.replayRadio)
         val buttonStartStopRecording = findViewById<ToggleButton>(R.id.start_stop_recording)
 
-        val buttonReplay = findViewById<ToggleButton>(R.id.replay)
-        val buttonRealTime = findViewById<ToggleButton>(R.id.real_time)
 
         val seekBar = findViewById<SeekBar>(R.id.seekBar).apply { progress = 300 }
         val buttonAutoScale = findViewById<ToggleButton>(R.id.button_autoscale)
@@ -190,6 +189,29 @@ class MainActivity : AppCompatActivity() {
             updateMusicVolume()
         }
 
+        fun getReplayObservable(): Observable<OpenBCI.Packet> {
+            val file:File = BrainFile.getLastRecordedFile(this)
+            return BrainFile().Reader(file).createPacketStreamObservable()
+        }
+        var observable:Observable<OpenBCI.Packet> = getReplayObservable()
+
+        radioGroupSelection.setOnCheckedChangeListener { _, checkedId ->
+            buttonStartStop.isChecked = false
+            if (checkedId == R.id.openBCI) {
+                observable = try {
+                    OpenBCI(this).createPacketStreamObservable()
+                } catch (e: RuntimeException) {
+                    Toast.makeText(this, e.message, Toast.LENGTH_SHORT)
+                        .show()
+                    getReplayObservable()
+                }
+                radioButtonReplay.isChecked = true
+            }
+            if (checkedId == R.id.replayRadio) {
+                observable = getReplayObservable()
+            }
+        }
+
         val subscribePacketProcessor = run {
             var packetStream: Disposable? = null
 
@@ -212,59 +234,27 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+
+
         buttonStartStop.setOnCheckedChangeListener { _, isChecked ->
             val radioButtonOpenBCI = findViewById<RadioButton>(R.id.openBCI)
-            val radioButtonReplay = findViewById<RadioButton>(R.id.replayRadio)
+            subscribePacketProcessor(buttonStartStop.isChecked) {
+                observable
+            }
+
             if (isChecked) {
-                if (radioButtonOpenBCI.isChecked) {
-                    subscribePacketProcessor(buttonStartStop.isChecked) {
-                        OpenBCI(this).createPacketStreamObservable()
-                    }
-                }
-                if (radioButtonReplay.isChecked) {
-                    subscribePacketProcessor(buttonStartStop.isChecked) {
-                        val file:File = BrainFile.getLastRecordedFile(this)
-                        BrainFile().Reader(file).createPacketStreamObservable()
-                    }
-                }
                 radioButtonOpenBCI.isEnabled = false
                 radioButtonReplay.isEnabled = false
-                //buttonStartStop.setBackgroundColor(Color.RED)
                 player.play()
-
             } else {
+                if (isRecording) {
+                    buttonStartStopRecording.isChecked = false
+
+                }
                 radioButtonOpenBCI.isEnabled = true
                 radioButtonReplay.isEnabled = true
-                //buttonStartStop.setBackgroundColor(Color.GREEN)
                 player.stop()
             }
-        }
-
-        radioGroupSelection.setOnCheckedChangeListener { _, checkedId ->
-            buttonStartStop.isChecked = false
-        }
-
-        buttonRealTime.setOnCheckedChangeListener { b, isChecked ->
-            b.isChecked = subscribePacketProcessor(isChecked) {
-                OpenBCI(this).createPacketStreamObservable()
-            }
-            buttonReplay.isEnabled = !b.isChecked
-        }
-
-        buttonReplay.setOnCheckedChangeListener { b, isChecked ->
-            buttonReplay.apply {
-                val numOfFiles = BrainFile.getNumberOfFilesInInternalStorage(this@MainActivity)
-                textOff = if (numOfFiles > 1) {
-                    "Replay"
-                } else {
-                    "Demo"
-                }
-            }
-            b.isChecked = subscribePacketProcessor(isChecked) {
-                val file:File = BrainFile.getLastRecordedFile(this)
-                BrainFile().Reader(file).createPacketStreamObservable()
-            }
-            buttonRealTime.isEnabled = !b.isChecked
         }
 
         Observable.interval(100, TimeUnit.MILLISECONDS)
