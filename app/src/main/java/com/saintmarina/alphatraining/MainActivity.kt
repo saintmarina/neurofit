@@ -102,18 +102,12 @@ class MainActivity : AppCompatActivity() {
                 R.id.radioEnvWaves -> channels.channels.forEach { c -> c.showAlphaEnvelopeWaves() }
             }
         }
+        val radioGroupSelection = findViewById<RadioGroup>(R.id.source_selection)
+
+
 
         var brainFileWriter: BrainFile.Writer? = null
-        buttonStartStop.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                //buttonStartStop.setBackgroundColor(Color.RED)
-                player.play()
 
-            } else {
-                //buttonStartStop.setBackgroundColor(Color.GREEN)
-                player.stop()
-            }
-        }
 
         buttonStartStopRecording.setOnCheckedChangeListener { _, isChecked ->
             isRecording = isChecked
@@ -216,6 +210,38 @@ class MainActivity : AppCompatActivity() {
                 }
                 packetStream != null
             }
+        }
+
+        buttonStartStop.setOnCheckedChangeListener { _, isChecked ->
+            val radioButtonOpenBCI = findViewById<RadioButton>(R.id.openBCI)
+            val radioButtonReplay = findViewById<RadioButton>(R.id.replayRadio)
+            if (isChecked) {
+                if (radioButtonOpenBCI.isChecked) {
+                    subscribePacketProcessor(buttonStartStop.isChecked) {
+                        OpenBCI(this).createPacketStreamObservable()
+                    }
+                }
+                if (radioButtonReplay.isChecked) {
+                    subscribePacketProcessor(buttonStartStop.isChecked) {
+                        val file:File = BrainFile.getLastRecordedFile(this)
+                        BrainFile().Reader(file).createPacketStreamObservable()
+                    }
+                }
+                radioButtonOpenBCI.isEnabled = false
+                radioButtonReplay.isEnabled = false
+                //buttonStartStop.setBackgroundColor(Color.RED)
+                player.play()
+
+            } else {
+                radioButtonOpenBCI.isEnabled = true
+                radioButtonReplay.isEnabled = true
+                //buttonStartStop.setBackgroundColor(Color.GREEN)
+                player.stop()
+            }
+        }
+
+        radioGroupSelection.setOnCheckedChangeListener { _, checkedId ->
+            buttonStartStop.isChecked = false
         }
 
         buttonRealTime.setOnCheckedChangeListener { b, isChecked ->
