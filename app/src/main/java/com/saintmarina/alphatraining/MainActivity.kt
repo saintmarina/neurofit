@@ -90,6 +90,7 @@ class MainActivity : AppCompatActivity() {
 
         val textMax = findViewById<TextView>(R.id.textMax)
         val textVolume = findViewById<TextView>(R.id.textVolume)
+        val textLimit = findViewById<TextView>(R.id.textLimit)
 
         val player = Audio(this)
         val visColorArray = arrayOf(Color.parseColor("#C20000"), Color.parseColor("#E6701C"), Color.parseColor("#BC9700"), Color.parseColor("#038A0C"), Color.BLUE, Color.parseColor("#800080"), Color.BLACK, Color.GRAY,)
@@ -260,8 +261,9 @@ class MainActivity : AppCompatActivity() {
         Observable.interval(100, TimeUnit.MILLISECONDS)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                textMax.text = "AlphaWave = %.2f µV\n limit = %.2f µV".format(alphaAmplitude, channels.limit)
-                textVolume.text = "volume = ${(volume * 100).toInt()}%"
+                textMax.text = "AlphaWave = %.2f µV".format(alphaAmplitude)
+                textLimit.text = "Limit = %.2f µV".format(channels.limit)
+                textVolume.text = "Volume = ${(volume * 100).toInt()}%"
                 channels.updateAllVizualizers()
             }
         updateMusicVolume()
