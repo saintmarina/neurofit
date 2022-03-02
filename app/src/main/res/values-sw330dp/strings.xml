@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">AlphaTraining</string>
+    <string name="title_large">NeuroFit</string>
+    <string name="title_small">Alpha waves trainer and EEG brain data visualizer</string>
+    <string name="radio_all_waves">All waves\n(1–150 Hz)</string>
+    <string name="radio_alpha_waves">Alpha waves\n(8–12 Hz)</string>
+    <string name="radio_alpha_strength">Alpha wave\nstrength</string>
+</resources>

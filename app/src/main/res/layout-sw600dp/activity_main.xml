@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/linear_layout"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:background="@drawable/ui_background"
+    tools:context=".MainActivity">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-thin"
+            android:text="@string/title_large"
+            android:textColor="#003056"
+            android:textSize="@dimen/title_large_text_size" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#003056"
+            android:fontFamily="sans-serif-thin"
+            android:text="@string/title_small"
+            android:textSize="@dimen/title_small_text_size"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/box_border"
+        android:layout_marginEnd="@dimen/group_box_outer_start_end_margin"
+        android:layout_marginStart="@dimen/group_box_outer_start_end_margin"
+        android:layout_marginBottom="@dimen/group_box_outer_bottom_top_margin"
+        android:layout_marginTop="@dimen/group_box_outer_bottom_top_margin">
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:layout_marginStart="@dimen/group_box_side_margin"
+            android:layout_marginTop="@dimen/group_box_title_top_margin"
+            android:textColor="@color/black"
+            android:textSize="@dimen/subtitle_text_size"
+            android:text="Source Selection" />
+
+        <View android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="@dimen/group_box_side_margin"
+            android:layout_marginRight="@dimen/group_box_side_margin"
+            android:background="#003056" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="3"
+            android:layout_gravity="center"
+            android:layout_marginLeft="@dimen/group_box_side_margin"
+            android:layout_marginRight="@dimen/group_box_side_margin"
+            android:orientation="horizontal">
+            <RadioGroup
+                android:id="@+id/source_selection"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checkedButton="@id/replayRadio"
+                android:layout_gravity="center"
+                android:gravity="start|center"
+                android:orientation="horizontal"
+                android:layout_weight="1"
+                android:weightSum="2">
+
+                <RadioButton
+                    android:id="@+id/openBCI"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="start|center"
+                    android:layout_weight="1"
+                    android:buttonTint="#003056"
+                    android:text="OpenBCI"
+                    android:textSize="@dimen/text_size"/>
+
+                <RadioButton
+                    android:id="@+id/replayRadio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="start|center"
+                    android:layout_weight="1"
+                    android:buttonTint="#003056"
+                    android:text="Replay"
+                    android:textSize="@dimen/text_size"/>
+            </RadioGroup>
+            <ToggleButton
+                android:id="@+id/start_stop_toggle_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="@dimen/group_box_side_margin"
+                android:background="@drawable/button_selector"
+                android:layout_weight="1"
+                android:textOff="Start"
+                android:textOn="Stop"
+                android:textSize="@dimen/button_text_size"/>
+            <ToggleButton
+                android:id="@+id/start_stop_recording"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="@dimen/group_box_side_margin"
+                android:background="@drawable/button_selector"
+                android:layout_weight="1"
+                android:textOff="REC 🔴"
+                android:textOn="REC 🔴"
+                android:textSize="@dimen/button_text_size" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/visualization"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/box_border"
+        android:layout_marginEnd="@dimen/group_box_outer_start_end_margin"
+        android:layout_marginStart="@dimen/group_box_outer_start_end_margin"
+        android:layout_marginBottom="@dimen/group_box_outer_bottom_top_margin"
+        android:layout_marginTop="@dimen/group_box_outer_bottom_top_margin">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:layout_marginStart="@dimen/group_box_side_margin"
+            android:layout_marginTop="@dimen/group_box_title_top_margin"
+            android:textColor="@color/black"
+            android:textSize="@dimen/subtitle_text_size"
+            android:text="Visualization Selection" />
+        <View android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="@dimen/group_box_side_margin"
+            android:layout_marginRight="@dimen/group_box_side_margin"
+            android:background="#003056" />
+        <RadioGroup
+            android:id="@+id/radioWaves"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checkedButton="@id/radioAllWaves"
+            android:orientation="horizontal"
+            android:weightSum="3"
+            android:layout_gravity="center"
+            android:gravity="start|center"
+            android:layout_marginLeft="@dimen/group_box_side_margin"
+            android:layout_marginRight="@dimen/group_box_side_margin">
+            <RadioButton
+                android:id="@+id/radioAllWaves"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="start|center"
+                android:layout_weight="1"
+                android:buttonTint="#003056"
+                android:text="@string/radio_all_waves"
+                android:textSize="@dimen/text_size" />
+            <RadioButton
+                android:id="@+id/radioAlphaWaves"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="start|center"
+                android:layout_weight="1"
+                android:buttonTint="#003056"
+                android:text="@string/radio_alpha_waves"
+                android:textSize="@dimen/text_size"/>
+            <RadioButton
+                android:id="@+id/radioEnvWaves"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="start|center"
+                android:layout_weight="1"
+                android:buttonTint="#003056"
+                android:text="@string/radio_alpha_strength"
+                android:textSize="@dimen/text_size"/>
+        </RadioGroup>
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/scale"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/box_border"
+        android:layout_marginEnd="@dimen/group_box_outer_start_end_margin"
+        android:layout_marginStart="@dimen/group_box_outer_start_end_margin"
+        android:layout_marginBottom="@dimen/group_box_outer_bottom_top_margin"
+        android:layout_marginTop="@dimen/group_box_outer_bottom_top_margin">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginStart="@dimen/group_box_side_margin"
+            android:layout_marginTop="@dimen/group_box_title_top_margin"
+            android:layout_weight="2"
+            android:text="Scale "
+            android:textColor="@color/black"
+            android:textSize="@dimen/subtitle_text_size"/>
+
+        <View android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="@dimen/group_box_side_margin"
+            android:layout_marginRight="@dimen/group_box_side_margin"
+            android:background="#003056" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:weightSum="10">
+            <SeekBar
+                android:id="@+id/seekBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="9"
+                android:max="1000"
+                android:min="100"
+                android:thumbTint="#003056"
+                android:progressTint="#003056"/>
+            <ToggleButton
+                android:id="@+id/button_autoscale"
+                android:background="@drawable/button_selector"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_margin="@dimen/group_box_side_margin"
+                android:textOn="Autoscale On "
+                android:textOff="Autoscale Off"
+                android:textSize="@dimen/button_text_size" />
+        </LinearLayout>
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/scale_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/box_border"
+        android:layout_marginEnd="@dimen/group_box_outer_start_end_margin"
+        android:layout_marginStart="@dimen/group_box_outer_start_end_margin"
+        android:layout_marginBottom="@dimen/group_box_outer_bottom_top_margin"
+        android:layout_marginTop="@dimen/group_box_outer_bottom_top_margin">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:layout_marginStart="@dimen/group_box_side_margin"
+            android:layout_marginTop="@dimen/group_box_title_top_margin"
+            android:textColor="@color/black"
+            android:textSize="@dimen/subtitle_text_size"
+            android:text="Metrics" />
+        <View android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="@dimen/group_box_side_margin"
+            android:layout_marginRight="@dimen/group_box_side_margin"
+            android:background="#003056" />
+        <LinearLayout
+            android:id="@+id/metrics"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="start|center"
+            android:gravity="center"
+            android:layout_margin="@dimen/group_box_side_margin"
+            android:weightSum="3">
+            <TextView
+                android:id="@+id/textMax"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|center"
+                android:layout_weight="1"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size" />
+            <TextView
+                android:id="@+id/textLimit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|center"
+                android:layout_weight="1"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size" />
+            <TextView
+                android:id="@+id/textVolume"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|center"
+                android:layout_weight="1"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size"/>
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginEnd="@dimen/group_box_outer_start_end_margin"
+        android:layout_marginStart="@dimen/group_box_outer_start_end_margin"
+        android:layout_marginBottom="@dimen/group_box_outer_bottom_top_margin"
+        android:layout_marginTop="@dimen/group_box_outer_bottom_top_margin"
+        android:background="@drawable/viz_border">
+        <LinearLayout
+            android:id="@+id/visualizerFullLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"/>
+        <LinearLayout
+            android:id="@+id/vizContainerLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" />
+    </LinearLayout>
+
+</LinearLayout>

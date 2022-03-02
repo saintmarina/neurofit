@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="title_large_text_size">50sp</dimen>
+    <dimen name="title_small_text_size">12sp</dimen>
+    <dimen name="subtitle_text_size">14sp</dimen>
+    <dimen name="button_text_size">10sp</dimen>
+    <dimen name="text_size">10sp</dimen>
+    <dimen name="group_box_title_top_margin">0dp</dimen>
+    <dimen name="group_box_side_margin">6dp</dimen>
+    <dimen name="group_box_outer_bottom_top_margin">2dp</dimen>
+    <dimen name="group_box_outer_start_end_margin">7dp</dimen>
+</resources>

@@ -8,7 +8,7 @@ class Audio(var context: Context) {
     var player:MediaPlayer? = null
 
     fun play() {
-        player = MediaPlayer.create(context, R.raw.pure_binaural_beat)
+        player = MediaPlayer.create(context, R.raw.sound)
         player!!.isLooping = true
         player!!.start()
     }

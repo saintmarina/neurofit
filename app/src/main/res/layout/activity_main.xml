@@ -13,20 +13,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:gravity="center_horizontal">
+        android:gravity="center">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="NeuroFit"
-            android:fontFamily="cursive"
-            android:textSize="90dp"/>
+            android:fontFamily="sans-serif-thin"
+            android:text="@string/title_large"
+            android:textColor="#003056"
+            android:textSize="@dimen/title_large_text_size" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Alpha waves trainer and EEG brain data visualizer"
-            android:textSize="20dp"
-            android:typeface="sans"
-            android:fontFamily="cursive"/>
+            android:textColor="#003056"
+            android:fontFamily="sans-serif-thin"
+            android:text="@string/title_small"
+            android:textSize="@dimen/title_small_text_size"/>
     </LinearLayout>
 
     <LinearLayout
@@ -35,31 +36,34 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:background="@drawable/box_border"
-        android:layout_marginEnd="10dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="5dp">
+        android:layout_marginEnd="@dimen/group_box_outer_start_end_margin"
+        android:layout_marginStart="@dimen/group_box_outer_start_end_margin"
+        android:layout_marginBottom="@dimen/group_box_outer_bottom_top_margin"
+        android:layout_marginTop="@dimen/group_box_outer_bottom_top_margin">
         <TextView
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_weight="2"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="3dp"
+            android:layout_marginStart="@dimen/group_box_side_margin"
+            android:layout_marginTop="@dimen/group_box_title_top_margin"
             android:textColor="@color/black"
-            android:textSize="18sp"
+            android:textSize="@dimen/subtitle_text_size"
+
             android:text="Source Selection" />
 
         <View android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:background="#aaa" />
+            android:layout_marginLeft="@dimen/group_box_side_margin"
+            android:layout_marginRight="@dimen/group_box_side_margin"
+            android:background="#003056" />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="3"
             android:layout_gravity="center"
+            android:layout_marginLeft="@dimen/group_box_side_margin"
+            android:layout_marginRight="@dimen/group_box_side_margin"
             android:orientation="horizontal">
             <RadioGroup
                 android:id="@+id/source_selection"
@@ -78,7 +82,9 @@
                     android:layout_height="wrap_content"
                     android:gravity="start|center"
                     android:layout_weight="1"
-                    android:text="OpenBCI" />
+                    android:buttonTint="#003056"
+                    android:text="OpenBCI"
+                    android:textSize="@dimen/text_size"/>
 
                 <RadioButton
                     android:id="@+id/replayRadio"
@@ -86,28 +92,32 @@
                     android:layout_height="wrap_content"
                     android:gravity="start|center"
                     android:layout_weight="1"
-                    android:text="Replay" />
+                    android:buttonTint="#003056"
+                    android:text="Replay"
+                    android:textSize="@dimen/text_size"/>
             </RadioGroup>
             <ToggleButton
                 android:id="@+id/start_stop_toggle_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_margin="10dp"
+                android:layout_margin="@dimen/group_box_side_margin"
                 android:background="@drawable/button_selector"
                 android:layout_weight="1"
                 android:textOff="Start"
-                android:textOn="Stop" />
+                android:textOn="Stop"
+                android:textSize="@dimen/button_text_size"/>
             <ToggleButton
                 android:id="@+id/start_stop_recording"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_margin="10dp"
+                android:layout_margin="@dimen/group_box_side_margin"
                 android:background="@drawable/button_selector"
                 android:layout_weight="1"
                 android:textOff="REC 🔴"
-                android:textOn="REC 🔴" />
+                android:textOn="REC 🔴"
+                android:textSize="@dimen/button_text_size" />
 
         </LinearLayout>
     </LinearLayout>
@@ -118,24 +128,24 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:background="@drawable/box_border"
-        android:layout_marginEnd="10dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="5dp">
+        android:layout_marginEnd="@dimen/group_box_outer_start_end_margin"
+        android:layout_marginStart="@dimen/group_box_outer_start_end_margin"
+        android:layout_marginBottom="@dimen/group_box_outer_bottom_top_margin"
+        android:layout_marginTop="@dimen/group_box_outer_bottom_top_margin">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_weight="2"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="3dp"
+            android:layout_marginStart="@dimen/group_box_side_margin"
+            android:layout_marginTop="@dimen/group_box_title_top_margin"
             android:textColor="@color/black"
-            android:textSize="18sp"
+            android:textSize="@dimen/subtitle_text_size"
             android:text="Visualization Selection" />
         <View android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:background="#aaa" />
+            android:layout_marginLeft="@dimen/group_box_side_margin"
+            android:layout_marginRight="@dimen/group_box_side_margin"
+            android:background="#003056" />
         <RadioGroup
             android:id="@+id/radioWaves"
             android:layout_width="match_parent"
@@ -145,29 +155,35 @@
             android:weightSum="3"
             android:layout_gravity="center"
             android:gravity="start|center"
-            android:background="@drawable/box_border"
-            >
+            android:layout_marginLeft="@dimen/group_box_side_margin"
+            android:layout_marginRight="@dimen/group_box_side_margin">
             <RadioButton
                 android:id="@+id/radioAllWaves"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="start|center"
                 android:layout_weight="1"
-                android:text="AllWaves" />
+                android:buttonTint="#003056"
+                android:text="@string/radio_all_waves"
+                android:textSize="@dimen/text_size" />
             <RadioButton
                 android:id="@+id/radioAlphaWaves"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="start|center"
                 android:layout_weight="1"
-                android:text="AlphaWaves" />
+                android:buttonTint="#003056"
+                android:text="@string/radio_alpha_waves"
+                android:textSize="@dimen/text_size"/>
             <RadioButton
                 android:id="@+id/radioEnvWaves"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="start|center"
                 android:layout_weight="1"
-                android:text="AlphaAmplitude" />
+                android:buttonTint="#003056"
+                android:text="@string/radio_alpha_strength"
+                android:textSize="@dimen/text_size"/>
         </RadioGroup>
 
     </LinearLayout>
@@ -177,24 +193,27 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:background="@drawable/box_border"
-        android:layout_marginEnd="10dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="5dp">
+        android:layout_marginEnd="@dimen/group_box_outer_start_end_margin"
+        android:layout_marginStart="@dimen/group_box_outer_start_end_margin"
+        android:layout_marginBottom="@dimen/group_box_outer_bottom_top_margin"
+        android:layout_marginTop="@dimen/group_box_outer_bottom_top_margin">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="0dp"
+            android:layout_marginStart="@dimen/group_box_side_margin"
+            android:layout_marginTop="@dimen/group_box_title_top_margin"
             android:layout_weight="2"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="3dp"
+            android:text="Scale "
             android:textColor="@color/black"
-            android:textSize="18sp"
-            android:text="Scale " />
+            android:textSize="@dimen/subtitle_text_size" />
+
         <View android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:background="#aaa" />
+            android:layout_marginLeft="@dimen/group_box_side_margin"
+            android:layout_marginRight="@dimen/group_box_side_margin"
+            android:background="#003056" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -205,21 +224,23 @@
                 android:id="@+id/seekBar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="20dp"
+                android:layout_weight="9"
                 android:max="1000"
                 android:min="100"
-                android:layout_weight="9"
-                />
+                android:thumbTint="#003056"
+                android:progressTint="#003056"/>
             <ToggleButton
                 android:id="@+id/button_autoscale"
                 android:background="@drawable/button_selector"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_margin="10dp"
-                android:textOn="Autoscale On"
-                android:textOff="Autoscale Off"/>
+                android:layout_margin="@dimen/group_box_side_margin"
+                android:textOn="Autoscale On "
+                android:textOff="Autoscale Off"
+                android:textSize="@dimen/button_text_size" />
         </LinearLayout>
+
     </LinearLayout>
     <LinearLayout
         android:id="@+id/scale_layout"
@@ -227,24 +248,24 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:background="@drawable/box_border"
-        android:layout_marginEnd="10dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="5dp">
+        android:layout_marginEnd="@dimen/group_box_outer_start_end_margin"
+        android:layout_marginStart="@dimen/group_box_outer_start_end_margin"
+        android:layout_marginBottom="@dimen/group_box_outer_bottom_top_margin"
+        android:layout_marginTop="@dimen/group_box_outer_bottom_top_margin">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_weight="2"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="3dp"
+            android:layout_marginStart="@dimen/group_box_side_margin"
+            android:layout_marginTop="@dimen/group_box_title_top_margin"
             android:textColor="@color/black"
-            android:textSize="18sp"
+            android:textSize="@dimen/subtitle_text_size"
             android:text="Metrics" />
         <View android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:background="#aaa" />
+            android:layout_marginLeft="@dimen/group_box_side_margin"
+            android:layout_marginRight="@dimen/group_box_side_margin"
+            android:background="#003056" />
         <LinearLayout
             android:id="@+id/metrics"
             android:layout_width="match_parent"
@@ -252,8 +273,7 @@
             android:orientation="horizontal"
             android:layout_gravity="start|center"
             android:gravity="center"
-            android:layout_margin="10dp"
-            android:background="@drawable/box_border"
+            android:layout_margin="@dimen/group_box_side_margin"
             android:weightSum="3">
             <TextView
                 android:id="@+id/textMax"
@@ -261,27 +281,34 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="start|center"
                 android:layout_weight="1"
-                android:textSize="18sp" />
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size" />
             <TextView
                 android:id="@+id/textLimit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start|center"
                 android:layout_weight="1"
-                android:textSize="18sp" />
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size" />
             <TextView
                 android:id="@+id/textVolume"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start|center"
                 android:layout_weight="1"
-                android:textSize="18sp" />
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size"/>
         </LinearLayout>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_marginEnd="@dimen/group_box_outer_start_end_margin"
+        android:layout_marginStart="@dimen/group_box_outer_start_end_margin"
+        android:layout_marginBottom="@dimen/group_box_outer_bottom_top_margin"
+        android:layout_marginTop="@dimen/group_box_outer_bottom_top_margin"
         android:background="@drawable/viz_border">
         <LinearLayout
             android:id="@+id/visualizerFullLayout"

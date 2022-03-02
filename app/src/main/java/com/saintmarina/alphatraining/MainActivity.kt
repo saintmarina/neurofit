@@ -261,9 +261,9 @@ class MainActivity : AppCompatActivity() {
         Observable.interval(100, TimeUnit.MILLISECONDS)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                textMax.text = "AlphaWave = %.2f µV".format(alphaAmplitude)
-                textLimit.text = "Limit = %.2f µV".format(channels.limit)
-                textVolume.text = "Volume = ${(volume * 100).toInt()}%"
+                textMax.text = "α strength = %.2f µV".format(alphaAmplitude)
+                textLimit.text = "Visualization scale = %.2f µV".format(channels.limit)
+                textVolume.text = "Audio volume = ${(volume * 100).toInt()}%"
                 channels.updateAllVizualizers()
             }
         updateMusicVolume()
