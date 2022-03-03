@@ -80,10 +80,8 @@ class MainActivity : AppCompatActivity() {
         val radioGroup = findViewById<RadioGroup>(R.id.radioWaves)
 
         val buttonStartStop = findViewById<ToggleButton>(R.id.start_stop_toggle_button)
-           // .apply { setBackgroundColor(Color.GREEN) }
         val radioButtonReplay = findViewById<RadioButton>(R.id.replayRadio)
         val buttonStartStopRecording = findViewById<ToggleButton>(R.id.start_stop_recording)
-
 
         val seekBar = findViewById<SeekBar>(R.id.seekBar).apply { progress = 300 }
         val buttonAutoScale = findViewById<ToggleButton>(R.id.button_autoscale)
