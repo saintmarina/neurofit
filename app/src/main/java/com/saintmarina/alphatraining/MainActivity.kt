@@ -19,9 +19,6 @@ package com.saintmarina.alphatraining
  * The Android Studio should have reconnected with the device.
 */
 
-// TODO be able to record a session
-// * Try requesting permission to write and read external files at runtime
-// * the goal is to save the file into Download folder
 // TODO add a timer to time the session
 // FIXME prevent the app from crashing when the OpenBCI is unplugged
 // TODO count the score of the session
@@ -35,11 +32,9 @@ package com.saintmarina.alphatraining
 
 // TODO think about 5-6 seconds alpha wave bursts combos
 // TODO think about adding an instructions/tutorial activity
-// TODO make each channel of a different color (corresponding to the wire color of the OpenBCI electrodes)
 
 
 import android.annotation.SuppressLint
-import android.app.ActionBar
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -47,7 +42,6 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.transition.Slide
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
@@ -58,7 +52,6 @@ import java.lang.RuntimeException
 import java.util.concurrent.TimeUnit
 import kotlin.math.pow
 
-private const val REQUEST = 112
 @SuppressLint("SetTextI18n")
 class MainActivity : AppCompatActivity() {
     private var isRecording = false
@@ -77,6 +70,7 @@ class MainActivity : AppCompatActivity() {
 
         val vizLayout = findViewById<LinearLayout>(R.id.visualizerFullLayout)
         val containerLayout = findViewById<LinearLayout>(R.id.vizContainerLayout)
+        val radioGroupSelection = findViewById<RadioGroup>(R.id.source_selection)
         val radioGroup = findViewById<RadioGroup>(R.id.radioWaves)
 
         val buttonStartStop = findViewById<ToggleButton>(R.id.start_stop_toggle_button)
@@ -100,12 +94,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.radioEnvWaves -> channels.channels.forEach { c -> c.showAlphaEnvelopeWaves() }
             }
         }
-        val radioGroupSelection = findViewById<RadioGroup>(R.id.source_selection)
-
-
-
         var brainFileWriter: BrainFile.Writer? = null
-
 
         buttonStartStopRecording.setOnCheckedChangeListener { _, isChecked ->
             isRecording = isChecked
@@ -176,7 +165,7 @@ class MainActivity : AppCompatActivity() {
                 channels.setScale(25*(seekBar.progress/seekBar.max.toFloat()).pow(1.5f), isEnv)
 
             alphaAmplitude = channels.computeAlphaWaveAmplitude()
-            volume =  alphaAmplitude.toFloat()/(channels.limit+0.00001F) // Here adding 1 so we never divide by 0
+            volume =  alphaAmplitude/(channels.limit+0.00001F) // Here adding 1 so we never divide by 0
             if (buttonStartStop.isChecked)
                 player.setVolume(volume)
         }
@@ -233,8 +222,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-
-
         buttonStartStop.setOnCheckedChangeListener { _, isChecked ->
             val radioButtonOpenBCI = findViewById<RadioButton>(R.id.openBCI)
             subscribePacketProcessor(buttonStartStop.isChecked) {
@@ -275,56 +262,6 @@ class MainActivity : AppCompatActivity() {
             throwable.message?.let { Log.e("Undeliverable exception", it) }
         }
     }
-/*
- * This piece of code requests permissions to WRITE and READ external storage.
- * Right now the app is saving and replaying brain data from internal storage,
- * thus we don't need to request these permissions. To change the dir of where the files
- * are saved goto BrainFile.kt -> companion object -> commonDocumentDirPath and uncomment
- * the code that is under the return statement
-
-    private fun checkPermissionsForRecording() {
-         if (Build.VERSION.SDK_INT >= 23) {
-           val permissions = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE)
-           if (!hasPermissions(permissions)) {
-               ActivityCompat.requestPermissions((this as Activity), permissions, REQUEST)
-           } else {
-               isRecording = true
-           }
-       }
-    }
-
-    private fun hasPermissions(permissions: Array<String>): Boolean {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            for (permission in permissions) {
-                if (ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
-
-                    return false
-                }
-            }
-        }
-        return true
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            REQUEST -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    isRecording = true
-                } else {
-                    Toast.makeText(this, "The application can't operate without requested permissions. Grant all requested permissions to proceed.", Toast.LENGTH_SHORT)
-                        .show()
-                    checkPermissionsForRecording()
-                }
-            }
-        }
-    }*/
-
-
 }
 
 
